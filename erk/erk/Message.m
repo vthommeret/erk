@@ -69,5 +69,19 @@
 	NSString *description = [[NSString alloc] initWithFormat:@"%@ %@ entered the chat room", [self getFormattedTime], _user];
 	return [description autorelease];
 }
+@end
 
+@implementation NickMessage
+
+- (id)initWithOldNick:(NSString *)oldNick text:(NSString *)text user:(NSString *)user time:(NSDate *)time {
+    if (self = [super initWithText:text user:user time:time]) {
+        _oldNick = [oldNick copy];
+    }
+    return self;
+}
+
+- (NSString *)description {
+    NSString *description = [[NSString alloc] initWithFormat:@"%@ %@ is now known as %@", [self getFormattedTime], _oldNick, _user];
+	return [description autorelease];
+}
 @end

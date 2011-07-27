@@ -12,6 +12,7 @@
 @implementation IrcServer
 
 @synthesize connected = _connected;
+@synthesize nick = _nick;
 
 #pragma mark -
 #pragma mark Public methods
@@ -59,14 +60,21 @@
 	} else {
 		NSArray *parts = [[line substringFromIndex:1] componentsSeparatedByString:@" "];
 		NSString *command = [parts objectAtIndex:0];
-		NSString *params = [line substringFromIndex:[line rangeOfString:@" "].location + 1];
+        NSString *params;
+        
+        if ([line rangeOfString:@" "].location != NSNotFound) {
+            params = [line substringFromIndex:[line rangeOfString:@" "].location + 1];            
+        }
+
 		if ([command caseInsensitiveCompare:kJoin] == NSOrderedSame) {
 			[self join:[parts objectAtIndex:1]];
 		} else if ([command caseInsensitiveCompare:kTopic] == NSOrderedSame) {
 			[self topic:params onChannel:channel];
 		} else if ([command caseInsensitiveCompare:kSay] == NSOrderedSame) {
 			[self privMsg:params toChannel:channel];
-		}
+		} else if ([command caseInsensitiveCompare:kNick] == NSOrderedSame) {
+            [self nick:params];
+        }
 	}
 }
 
@@ -80,6 +88,10 @@
     if ([_delegate respondsToSelector:@selector(didSay:to:fromUser:)]) {
         [_delegate didSay:msg to:channel fromUser:_nick];
     }
+}
+
+- (void)nick:(NSString *)nick {
+    [self writeCommand:kNick withValue:nick];
 }
 
 - (void)topic:(NSString *)topic onChannel:(NSString *)channel {
@@ -254,6 +266,21 @@
                 [_delegate didTopic:topic onChannel:channel fromUser:nil];
             }
 		}
+        
+        else if ([command isEqualToString:kNick] ){
+            NSLog(@"%@", paramsArray);
+            NSString *oldNick = [prefix objectForKey:@"name"];
+            NSString *nick = [paramsArray objectAtIndex:0];
+            
+            if ([self.nick isEqualToString:oldNick]) {
+                self.nick = nick;
+            }
+            
+            if ([_delegate respondsToSelector:@selector(didNick:fromUser:)]) {
+                [_delegate didNick:nick fromUser:oldNick];
+            }
+
+        }
 		
 		[paramsArray release];
 	}

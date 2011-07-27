@@ -47,6 +47,7 @@
 }
 
 @property (nonatomic, assign) BOOL connected;
+@property (nonatomic, copy) NSString *nick;
 
 - (id)initWithHost:(NSString *)host port:(NSInteger)port nick:(NSString *)nick user:(NSString *)user
 			  name:(NSString *)name serverPass:(NSString *)serverPass
@@ -56,6 +57,7 @@
 - (void)join:(NSString *)channel;
 - (void)privMsg:(NSString *)msg toChannel:(NSString *)channel;
 - (void)topic:(NSString *)topic onChannel:(NSString *)channel;
+- (void)nick:(NSString *)nick;
 
 - (NSString *)getNick;
 
@@ -77,5 +79,6 @@
 - (void)didSay:(NSString *)msg to:(NSString *)recipient fromUser:(NSString *)user;
 - (void)didTopic:(NSString *)topic onChannel:(NSString *)channel fromUser:(NSString *)user;
 - (void)didNames:(NSArray *)names forChannel:(NSString *)channel;
+- (void)didNick:(NSString *)nick fromUser:(NSString *)user;
 
 @end

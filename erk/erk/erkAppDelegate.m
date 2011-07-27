@@ -151,6 +151,7 @@
         [self loadChannel:channel];
         [self.mainView.channelList.tableView reloadData];
         _currentChannel = channel;
+        [self.mainView.messageList.tableView reloadData];   
     } // else someone else joined
 }
 
@@ -203,6 +204,18 @@
     
     if ([channel isEqual:_currentChannel]) {
         [self.mainView.userList.tableView reloadData];
+    }
+}
+
+- (void)didNick:(NSString *)nick fromUser:(NSString *)user {
+    if (_currentChannel != nil) {
+        NSMutableArray *messages = [[_serverData objectForKey:_currentChannel] objectForKey:@"messages"];
+        
+        NickMessage *message = [[NickMessage alloc] initWithOldNick:user text:@"" user:nick time:[NSDate date]];
+        [messages addObject:message];
+        [message release];
+        
+        [self.mainView.messageList.tableView reloadData];
     }
 }
 

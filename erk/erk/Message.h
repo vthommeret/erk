@@ -24,3 +24,11 @@
 
 @interface JoinMessage : Message {}
 @end
+
+@interface NickMessage : Message {
+    NSString *_oldNick;
+}
+
+- (id)initWithOldNick:(NSString *)oldNick text:(NSString *)text user:(NSString *)user time:(NSDate *)time;
+
+@end
