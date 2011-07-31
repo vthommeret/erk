@@ -35,6 +35,10 @@
     [super dealloc];
 }
 
+- (void)reloadData {
+    [_tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+}
+
 #pragma mark -
 #pragma mark Table view delegate methods
 

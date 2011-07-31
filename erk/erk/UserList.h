@@ -17,5 +17,6 @@
 @property (nonatomic, retain) TUITableView *tableView;
 
 - (id)initWithFrame:(CGRect)b;
+- (void)reloadData;
 
 @end
