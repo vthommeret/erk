@@ -19,6 +19,7 @@
 #define kPrivMsg	@"PRIVMSG"
 #define kTopic		@"TOPIC"
 #define kSay		@"SAY"
+#define kMsg        @"MSG"
 
 #define kPing		@"PING"
 #define kPong		@"PONG"
