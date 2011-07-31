@@ -27,6 +27,7 @@
 #define kWelcome	@"001"
 #define kTopicReply	@"332"
 #define kNameReply	@"353"
+#define kNickInUse  @"433"
 
 @class GCDAsyncSocket;
 @protocol IrcServerDelegate;
@@ -81,5 +82,6 @@
 - (void)didTopic:(NSString *)topic onChannel:(NSString *)channel fromUser:(NSString *)user;
 - (void)didNames:(NSArray *)names forChannel:(NSString *)channel;
 - (void)didNick:(NSString *)nick fromUser:(NSString *)user;
+- (void)didNickInUse:(NSString *)nick;
 
 @end

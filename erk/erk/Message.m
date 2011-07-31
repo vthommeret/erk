@@ -80,3 +80,25 @@
     return [NSString stringWithFormat:@"%@ %@ is now known as %@", [self getFormattedTime], _oldNick, _user];
 }
 @end
+
+@implementation ServerMessage
+
+- (NSString *)description {
+    NSString *description = [[NSString alloc] initWithFormat:@"%@ Server: %@", [self getFormattedTime], _text];
+    return [description autorelease];   
+}
+@end
+
+@implementation NickInUseMessage
+
+- (id)initWithInUseNick:(NSString *)inUseNick time:(NSDate *)time {
+    if ((self = [super initWithText:nil user:nil time:time])) {
+        _inUseNick = [inUseNick copy];
+    }
+    return self;
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@ n ick is already in use: %@", [self getFormattedTime], _inUseNick];
+}
+@end
