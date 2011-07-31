@@ -209,13 +209,23 @@
 
 - (void)didNick:(NSString *)nick fromUser:(NSString *)user {
     if (_currentChannel != nil) {
-        NSMutableArray *messages = [[_serverData objectForKey:_currentChannel] objectForKey:@"messages"];
+        NSMutableDictionary *channel = [_serverData objectForKey:_currentChannel];
+        NSMutableArray *messages = [channel objectForKey:@"messages"];
+        NSMutableArray *users = [channel objectForKey:@"users"];
+
+        [users removeObject:user];
+        if ([nick isEqual:[_server getNick]]) {
+            [users insertObject:nick atIndex:0];
+        } else {
+            [users addObject:nick];            
+        }
         
         NickMessage *message = [[NickMessage alloc] initWithOldNick:user text:@"" user:nick time:[NSDate date]];
         [messages addObject:message];
         [message release];
         
         [self.mainView.messageList.tableView reloadData];
+        [self.mainView.userList.tableView reloadData];
     }
 }
 
