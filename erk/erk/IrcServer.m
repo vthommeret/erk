@@ -74,6 +74,14 @@
 			[self privMsg:params toChannel:channel];
 		} else if ([command caseInsensitiveCompare:kNick] == NSOrderedSame) {
             [self nick:params];
+        } else if ([command caseInsensitiveCompare:kMsg] == NSOrderedSame) {
+            if ([parts count] > 0) {
+                NSString *destinationChannel = [parts objectAtIndex:1];
+                if ([line rangeOfString:@" "].location != NSNotFound) {
+                    params = [params substringFromIndex:[params rangeOfString:@" "].location +1];
+                    [self privMsg:params toChannel:destinationChannel];
+                }                
+            }
         }
 	}
 }
