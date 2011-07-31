@@ -74,7 +74,7 @@
 @implementation NickMessage
 
 - (id)initWithOldNick:(NSString *)oldNick text:(NSString *)text user:(NSString *)user time:(NSDate *)time {
-    if (self = [super initWithText:text user:user time:time]) {
+    if ((self = [super initWithText:text user:user time:time])) {
         _oldNick = [oldNick copy];
     }
     return self;
