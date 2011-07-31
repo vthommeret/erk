@@ -26,18 +26,6 @@
 		tableView.dataSource = self;
 		tableView.delegate = self;
         
-//        tableView.layout = ^(TUIView *view) {
-//            MainView *mainView = (MainView *)view.superview;
-//            
-//            CGFloat channelWidth = mainView.channelList.tableView.bounds.size.width;
-//            CGFloat userWidth = mainView.userList.tableView.bounds.size.width;
-//            
-//            return CGRectMake(channelWidth + 1,
-//                              mainView.bounds.origin.y,
-//                              mainView.bounds.size.width - channelWidth - userWidth - 2,
-//                              mainView.bounds.size.height);
-//        };
-        
         self.tableView = tableView;
         [tableView release];
     }
@@ -57,7 +45,8 @@
 
 - (CGFloat)tableView:(TUITableView *)tableView heightForRowAtIndexPath:(TUIFastIndexPath *)indexPath
 {
-	return 36.0;
+    MainTableViewCell *cell = (MainTableViewCell *) [self tableView:tableView cellForRowAtIndexPath:indexPath];
+    return [cell sizeConstrainedToWidth:tableView.bounds.size.width].height + 17;
 }
 
 - (TUITableViewCell *)tableView:(TUITableView *)tableView cellForRowAtIndexPath:(TUIFastIndexPath *)indexPath
@@ -72,7 +61,7 @@
 	s.color = [TUIColor blackColor];
 	s.font = mainView.mediumFont;
 	cell.attributedString = s;
-	
+    
 	return cell;
 }
 

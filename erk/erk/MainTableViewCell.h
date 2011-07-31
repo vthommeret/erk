@@ -15,4 +15,6 @@
 
 @property (nonatomic, copy) NSAttributedString *attributedString;
 
+- (CGSize)sizeConstrainedToWidth:(CGFloat)width;
+
 @end

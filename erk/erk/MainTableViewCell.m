@@ -50,6 +50,7 @@
 - (void)drawRect:(CGRect)rect
 {
 	CGRect b = self.bounds;
+    
 	CGContextRef ctx = TUIGraphicsGetCurrentContext();
     
 	if (self.selected) {
@@ -72,6 +73,10 @@
 	textRenderer.frame = textRect; // set the frame so it knows where to draw itself
 	[textRenderer draw];
 	
+}
+
+- (CGSize)sizeConstrainedToWidth:(CGFloat)width {
+    return [textRenderer sizeConstrainedToWidth:width];
 }
 
 @end
