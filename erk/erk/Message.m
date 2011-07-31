@@ -38,8 +38,7 @@
 }
 
 - (NSString *)description {
-	NSString *description = [[NSString alloc] initWithFormat:@"%@ %@: %@", [self getFormattedTime], _user, _text];
-	return [description autorelease];
+	return [NSString stringWithFormat:@"%@ %@: %@", [self getFormattedTime], _user, _text];
 }
 
 - (id)copyWithZone:(NSZone *)zone {
@@ -52,13 +51,11 @@
 @implementation TopicMessage
 
 - (NSString *)description {
-	NSString *description;
 	if (_user == nil) {
-		description = [[NSString alloc] initWithFormat:@"%@ topic: %@", [self getFormattedTime], _text];
+		return [NSString stringWithFormat:@"%@ topic: %@", [self getFormattedTime], _text];
 	} else {
-		description = [[NSString alloc] initWithFormat:@"%@ %@ set the topic: %@", [self getFormattedTime], _user, _text];
+		return [NSString stringWithFormat:@"%@ %@ set the topic: %@", [self getFormattedTime], _user, _text];
 	}
-	return [description autorelease];
 }
 
 @end
@@ -66,8 +63,7 @@
 @implementation JoinMessage
 
 - (NSString *)description {
-	NSString *description = [[NSString alloc] initWithFormat:@"%@ %@ entered the chat room", [self getFormattedTime], _user];
-	return [description autorelease];
+	return [NSString stringWithFormat:@"%@ %@ entered the chat room", [self getFormattedTime], _user];
 }
 @end
 
@@ -81,7 +77,6 @@
 }
 
 - (NSString *)description {
-    NSString *description = [[NSString alloc] initWithFormat:@"%@ %@ is now known as %@", [self getFormattedTime], _oldNick, _user];
-	return [description autorelease];
+    return [NSString stringWithFormat:@"%@ %@ is now known as %@", [self getFormattedTime], _oldNick, _user];
 }
 @end
