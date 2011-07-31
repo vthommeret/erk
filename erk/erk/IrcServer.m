@@ -59,29 +59,48 @@
         [self privMsg:line toChannel:channel];
     } else {
         NSArray *parts = [[line substringFromIndex:1] componentsSeparatedByString:@" "];
-        NSString *command = [parts objectAtIndex:0];
-        NSString *params;
-        
-        if ([line rangeOfString:@" "].location != NSNotFound) {
-            params = [line substringFromIndex:[line rangeOfString:@" "].location + 1];
-        }
+        NSInteger count = [parts count];
 
-        if ([command caseInsensitiveCompare:kJoin] == NSOrderedSame) {
-            [self join:[parts objectAtIndex:1]];
-        } else if ([command caseInsensitiveCompare:kTopic] == NSOrderedSame) {
-            [self topic:params onChannel:channel];
-        } else if ([command caseInsensitiveCompare:kSay] == NSOrderedSame) {
-            [self privMsg:params toChannel:channel];
-        } else if ([command caseInsensitiveCompare:kNick] == NSOrderedSame) {
-            [self nick:params];
-        } else if ([command caseInsensitiveCompare:kMsg] == NSOrderedSame) {
-            if ([parts count] > 0) {
-                NSString *destinationChannel = [parts objectAtIndex:1];
-                if ([line rangeOfString:@" "].location != NSNotFound) {
-                    params = [params substringFromIndex:[params rangeOfString:@" "].location +1];
-                    [self privMsg:params toChannel:destinationChannel];
+        if (count > 0) {
+            NSString *command = [parts objectAtIndex:0];
+            if ([command caseInsensitiveCompare:kJoin] == NSOrderedSame) {
+                if (count > 1) {
+                    [self join: [[parts subarrayWithRange:(NSRange){1, count - 1}] componentsJoinedByString: @" "]];
+                } else {
+                    // was a command to join the empty string
+                }
+            } else if ([command caseInsensitiveCompare:kTopic] == NSOrderedSame) {
+                if (count > 1) {
+                    [self topic:[[parts subarrayWithRange:(NSRange){1, count - 1}] componentsJoinedByString: @" "] onChannel:channel];
+                } else {
+                    [self topic:nil onChannel:channel];
+                }
+            } else if ([command caseInsensitiveCompare:kSay] == NSOrderedSame) {
+                if (count > 1) {
+                    [self privMsg:[[parts subarrayWithRange:(NSRange){1, count - 1}] componentsJoinedByString: @" "] toChannel:channel];
+                } else {
+                    // said empty string
+                }
+            } else if ([command caseInsensitiveCompare:kNick] == NSOrderedSame) {
+                if (count > 1) {
+                    [self nick:[[parts subarrayWithRange:(NSRange){1, count - 1}] componentsJoinedByString: @" "]];
+                } else {
+                    // changed nick to empty string
+                }
+            } else if ([command caseInsensitiveCompare:kMsg] == NSOrderedSame) {
+                if (count > 1) {
+                    if (count > 2) {
+                        [self privMsg:[[parts subarrayWithRange:(NSRange){2, count - 2}] componentsJoinedByString: @" "] toChannel:[parts objectAtIndex:1]];
+                    } else {
+                        // said empty string to person/channel
+                    }
+                } else {
+                    // said empty string to the empty string channel
                 }
             }
+            
+        } else {
+            // was an empty string command
         }
     }
 }
@@ -276,7 +295,6 @@
         }
         
         else if ([command isEqualToString:kNick] ){
-            NSLog(@"%@", paramsArray);
             NSString *oldNick = [prefix objectForKey:@"name"];
             NSString *nick = [paramsArray objectAtIndex:0];
             
