@@ -35,6 +35,13 @@
     [super dealloc];
 }
 
+- (void)reloadData {
+    [_tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+}
+
+#pragma mark -
+#pragma mark TUITableView methods
+
 - (NSInteger)tableView:(TUITableView *)table numberOfRowsInSection:(NSInteger)section
 {
 	return [_appDelegate countUsers];

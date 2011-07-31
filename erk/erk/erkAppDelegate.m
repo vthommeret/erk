@@ -111,8 +111,8 @@
 
 - (void)setCurrentChannelForRow:(NSInteger)row {
     _currentChannel = [self channelNameForRow:row];
-    [self.mainView.messageList.tableView reloadData];
-    [self.mainView.userList.tableView reloadData];
+    [self.mainView.messageList reloadData];
+    [self.mainView.userList reloadData];
 }
 
 - (NSInteger)countUsers {
@@ -149,9 +149,9 @@
 - (void)didJoin:(NSString *)channel byUser:(NSString *)user {
     if ([_serverData objectForKey:channel] == nil) { // I joined
         [self loadChannel:channel];
-        [self.mainView.channelList.tableView reloadData];
+        [self.mainView.channelList reloadData];
         _currentChannel = channel;
-        [self.mainView.messageList.tableView reloadData];   
+        [self.mainView.messageList reloadData];   
     } // else someone else joined
 }
 
@@ -177,11 +177,11 @@
     [message release];
     
     if ([channel isEqual:_currentChannel]) {
-        [self.mainView.messageList.tableView reloadData];
+        [self.mainView.messageList reloadData];
     } else {
         NSNumber *unread = [channelData objectForKey:@"unread"];
         [channelData setObject:[NSNumber numberWithInt:([unread intValue] + 1)] forKey:@"unread"];
-        [self.mainView.channelList.tableView reloadData];
+        [self.mainView.channelList reloadData];
     }
 }
 
@@ -193,7 +193,7 @@
     [message release];
     
     if ([channel isEqual:_currentChannel]) {
-        [self.mainView.messageList.tableView reloadData];
+        [self.mainView.messageList reloadData];
     }
 }
 
@@ -203,7 +203,7 @@
     [users addObjectsFromArray:names];
     
     if ([channel isEqual:_currentChannel]) {
-        [self.mainView.userList.tableView reloadData];
+        [self.mainView.userList reloadData];
     }
 }
 
@@ -224,8 +224,8 @@
         [messages addObject:message];
         [message release];
         
-        [self.mainView.messageList.tableView reloadData];
-        [self.mainView.userList.tableView reloadData];
+        [self.mainView.messageList reloadData];
+        [self.mainView.userList reloadData];
     }
 }
 
