@@ -59,7 +59,6 @@
         
         TUITextField *messageField = [[TUITextField alloc] initWithFrame:messageFieldFrame];
         messageField.contentInset = TUIEdgeInsetsMake(5, 5, 0, 0);
-        messageField.text = @"hello";
         
         messageField.delegate = self;
         [messageField addTarget:self action:@selector(handleReturn:) forControlEvents:TUIControlEventEditingDidEndOnExit];

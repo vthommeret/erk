@@ -103,6 +103,7 @@ CGRect(^TUIViewCenteredLayout)(TUIView*) = nil;
 {
 	if((self = [super init]))
 	{
+		_viewFlags.clearsContextBeforeDrawing = 1;
 		self.frame = frame;
 		toolTipDelay = 1.5;
 	}
@@ -259,7 +260,8 @@ else CGContextSetRGBFillColor(context, 1, 0, 0, 0.3); CGContextFillRect(context,
 	CGRect b = self.bounds; \
 	CGContextRef context = [self _CGContext]; \
 	TUIGraphicsPushContext(context); \
-	CGContextClearRect(context, b); \
+	if(_viewFlags.clearsContextBeforeDrawing) \
+		CGContextClearRect(context, b); \
 	CGContextScaleCTM(context, Screen_Scale, Screen_Scale); \
 	CGContextSetAllowsAntialiasing(context, true); \
 	CGContextSetShouldAntialias(context, true); \
@@ -271,15 +273,21 @@ else CGContextSetRGBFillColor(context, 1, 0, 0, 0.3); CGContextFillRect(context,
 	layer.contents = (id)image.CGImage; \
 	TUIGraphicsPopContext();
 	
+	CGRect rectToDraw = self.bounds;
+	if(!CGRectEqualToRect(_context.dirtyRect, CGRectZero)) {
+		rectToDraw = _context.dirtyRect;
+		_context.dirtyRect = CGRectZero;
+	}
+	
 	if(drawRect) {
 		// drawRect is implemented via a block
 		PRE_DRAW
-		drawRect(self, self.bounds);
+		drawRect(self, rectToDraw);
 		POST_DRAW
 	} else if((drawRectIMP != dontCallThisBasicDrawRectIMP) && ![self _disableDrawRect]) {
 		// drawRect is overridden by subclass
 		PRE_DRAW
-		drawRectIMP(self, drawRectSEL, self.bounds);
+		drawRectIMP(self, drawRectSEL, rectToDraw);
 		POST_DRAW
 	} else {
 		// drawRect isn't overridden by subclass, don't call, let the CA machinery just handle backgroundColor (fast path)
@@ -756,6 +764,7 @@ else CGContextSetRGBFillColor(context, 1, 0, 0, 0.3); CGContextFillRect(context,
 
 - (void)setNeedsDisplayInRect:(CGRect)rect
 {
+	_context.dirtyRect = rect;
 	[self.layer setNeedsDisplayInRect:rect];
 }
 
@@ -810,6 +819,16 @@ else CGContextSetRGBFillColor(context, 1, 0, 0, 0.3); CGContextFillRect(context,
 	if(color.alphaComponent < 1.0)
 		self.opaque = NO;
 	[self setNeedsDisplay];
+}
+
+- (BOOL)clearsContextBeforeDrawing
+{
+	return _viewFlags.clearsContextBeforeDrawing;
+}
+
+- (void)setClearsContextBeforeDrawing:(BOOL)newValue
+{
+	_viewFlags.clearsContextBeforeDrawing = newValue;
 }
 
 @end

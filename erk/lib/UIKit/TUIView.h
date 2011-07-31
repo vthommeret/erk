@@ -81,6 +81,7 @@ extern CGRect(^TUIViewCenteredLayout)(TUIView*);
 		NSInteger lastHeight;
 		BOOL lastOpaque;
 		CGContextRef context;
+		CGRect dirtyRect;
 	} _context;
 	
 	struct {
@@ -93,6 +94,7 @@ extern CGRect(^TUIViewCenteredLayout)(TUIView*);
 		unsigned int pasteboardDraggingEnabled:1;
 		unsigned int pasteboardDraggingIsDragging:1;
 		unsigned int dragDistanceLock:1;
+		unsigned int clearsContextBeforeDrawing:1;
 		
 		unsigned int delegateMouseEntered:1;
 		unsigned int delegateMouseExited:1;
@@ -311,6 +313,11 @@ extern CGRect(^TUIViewCenteredLayout)(TUIView*);
  default is NO. doesn't check superviews
  */
 @property (nonatomic,getter=isHidden) BOOL hidden;
+
+/**
+ default is YES. if set to NO, the view must fill its entire bounds, otherwise the view may contain graphical garbage.
+ */
+@property (nonatomic) BOOL clearsContextBeforeDrawing;
 
 @end
 
