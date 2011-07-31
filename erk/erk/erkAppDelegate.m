@@ -234,11 +234,10 @@
         NSMutableArray *messages = [[_serverData objectForKey:_currentChannel] objectForKey:@"messages"];
 
         NickInUseMessage *message = [[NickInUseMessage alloc] initWithInUseNick:nick time:[NSDate date]];
-        NSLog(@"%@", message);
         [messages addObject:message];
         [message release];
         
-        [self.mainView.messageList.tableView reloadData];
+        [self.mainView.messageList reloadData];
     }
 }
 

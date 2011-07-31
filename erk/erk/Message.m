@@ -104,7 +104,6 @@
 }
 
 - (NSString *)description {
-    NSString *description = [[NSString alloc] initWithFormat:@"%@ nick is already in use: %@", [self getFormattedTime], _inUseNick];
-    return [description autorelease];
+    return [NSString stringWithFormat:@"%@ n ick is already in use: %@", [self getFormattedTime], _inUseNick];
 }
 @end
