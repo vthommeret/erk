@@ -85,3 +85,26 @@
 	return [description autorelease];
 }
 @end
+
+@implementation ServerMessage
+
+- (NSString *)description {
+    NSString *description = [[NSString alloc] initWithFormat:@"%@ Server: %@", [self getFormattedTime], _text];
+    return [description autorelease];   
+}
+@end
+
+@implementation NickInUseMessage
+
+- (id)initWithInUseNick:(NSString *)inUseNick time:(NSDate *)time {
+    if ((self = [super initWithText:nil user:nil time:time])) {
+        _inUseNick = [inUseNick copy];
+    }
+    return self;
+}
+
+- (NSString *)description {
+    NSString *description = [[NSString alloc] initWithFormat:@"%@ nick is already in use: %@", [self getFormattedTime], _inUseNick];
+    return [description autorelease];
+}
+@end

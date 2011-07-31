@@ -308,6 +308,14 @@
 
         }
         
+        else if ([command isEqualToString:kNickInUse]) {
+            NSString *inUseNick = [paramsArray objectAtIndex:1];
+            
+            if ([_delegate respondsToSelector:@selector(didNickInUse:)]) {
+                [_delegate didNickInUse:inUseNick];
+            }
+        }
+        
         [paramsArray release];
     }
 

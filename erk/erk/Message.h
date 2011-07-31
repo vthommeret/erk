@@ -32,3 +32,12 @@
 - (id)initWithOldNick:(NSString *)oldNick text:(NSString *)text user:(NSString *)user time:(NSDate *)time;
 
 @end
+
+@interface ServerMessage : Message {}
+@end
+
+@interface NickInUseMessage : ServerMessage {
+    NSString *_inUseNick;
+}
+- (id)initWithInUseNick: (NSString *)inUseNick time:(NSDate *)time;
+@end
