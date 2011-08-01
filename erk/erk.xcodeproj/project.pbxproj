@@ -106,8 +106,8 @@
 		3D2889A813C1653100F137BC /* erk-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "erk-Prefix.pch"; sourceTree = "<group>"; };
 		3D2889A913C1653100F137BC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		3D2889AC13C1653100F137BC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		3D2889AE13C1653100F137BC /* erkAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = erkAppDelegate.h; sourceTree = "<group>"; };
-		3D2889AF13C1653100F137BC /* erkAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = erkAppDelegate.m; sourceTree = "<group>"; };
+		3D2889AE13C1653100F137BC /* erkAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = erkAppDelegate.h; sourceTree = "<group>"; };
+		3D2889AF13C1653100F137BC /* erkAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = erkAppDelegate.m; sourceTree = "<group>"; };
 		3D2889B213C1653100F137BC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		3D2889B913C1653100F137BC /* erkTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = erkTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D2889BF13C1653200F137BC /* erkTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "erkTests-Info.plist"; sourceTree = "<group>"; };

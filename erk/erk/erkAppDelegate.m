@@ -92,6 +92,21 @@
     [_window makeKeyAndOrderFront:nil];
 }
 
+- (void)updateWindowTitle {
+    NSMutableDictionary *channelData = [_serverData objectForKey:_currentChannel];
+    NSString *topic = [channelData objectForKey:@"topic"];
+    
+    NSString *title;
+    
+    if (topic == nil || [topic isEqualToString:@""]) {
+        title = [NSString stringWithFormat:@"%@", _currentChannel];
+    } else {
+        title = [NSString stringWithFormat:@"%@ — %@", _currentChannel, topic];
+    }
+    
+    [_window performSelectorOnMainThread:@selector(setTitle:) withObject:title waitUntilDone:NO];
+}
+
 #pragma mark -
 #pragma mark Public methods
 
@@ -113,6 +128,7 @@
     _currentChannel = [self channelNameForRow:row];
     [self.mainView.messageList reloadData];
     [self.mainView.userList reloadData];
+    [self updateWindowTitle];
 }
 
 - (NSInteger)countUsers {
@@ -151,7 +167,9 @@
         [self loadChannel:channel];
         [self.mainView.channelList reloadData];
         _currentChannel = channel;
-        [self.mainView.messageList reloadData];   
+        [self.mainView.messageList reloadData];
+        
+        [self updateWindowTitle];
     } // else someone else joined
 }
 
@@ -186,14 +204,19 @@
 }
 
 - (void)didTopic:(NSString *)topic onChannel:(NSString *)channel fromUser:(NSString *)user {
-    NSMutableArray *messages = [[_serverData objectForKey:channel] objectForKey:@"messages"];
+    NSMutableDictionary *channelData = [_serverData objectForKey:channel];
+    
+    NSMutableArray *messages = [channelData objectForKey:@"messages"];
     
     TopicMessage *message = [[TopicMessage alloc] initWithText:topic user:user time:[NSDate date]];
     [messages addObject:message];
     [message release];
     
+    [channelData setObject:topic forKey:@"topic"];
+    
     if ([channel isEqual:_currentChannel]) {
         [self.mainView.messageList reloadData];
+        [self updateWindowTitle];
     }
 }
 

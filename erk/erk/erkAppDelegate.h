@@ -35,6 +35,8 @@
 @property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
+- (void)updateWindowTitle;
+
 - (void)doCommand:(NSString *)command;
 - (NSInteger)countChannels;
 - (NSString *)channelNameForRow:(NSInteger)row;
