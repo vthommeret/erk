@@ -20,8 +20,8 @@
         _appDelegate = (erkAppDelegate *) [NSApplication sharedApplication].delegate;
         
         TUITableView *tableView = [[TUITableView alloc] initWithFrame:b];
-		tableView.dataSource = self;
-		tableView.delegate = self;
+        tableView.dataSource = self;
+        tableView.delegate = self;
         
         self.tableView = tableView;
         [tableView release];
@@ -44,27 +44,37 @@
 
 - (NSInteger)tableView:(TUITableView *)table numberOfRowsInSection:(NSInteger)section
 {
-	return [_appDelegate countChannels];
+    return [_appDelegate countChannels];
 }
 
 - (CGFloat)tableView:(TUITableView *)tableView heightForRowAtIndexPath:(TUIFastIndexPath *)indexPath
 {
-	return 35.0;
+    return 35.0;
 }
 
 - (TUITableViewCell *)tableView:(TUITableView *)tableView cellForRowAtIndexPath:(TUIFastIndexPath *)indexPath
 {
     MainView *mainView = (MainView *)tableView.superview;
-	MainTableViewCell *cell = reusableTableCellOfClass(tableView, MainTableViewCell);
+    MainTableViewCell *cell = reusableTableCellOfClass(tableView, MainTableViewCell);
     
     NSString *channelName = [_appDelegate channelNameForRow:indexPath.row];
-	
-	TUIAttributedString *s = [TUIAttributedString stringWithString:channelName];
-	s.color = [TUIColor blackColor];
-	s.font = mainView.mediumFont;
-	cell.attributedString = s;
-	
-	return cell;
+    NSMutableDictionary *channelData = [_appDelegate channelDataForName:channelName];
+    
+    int unread =  [[channelData objectForKey:@"unread"] intValue];
+    NSString *channelText;
+    
+    if (unread > 0) {
+        channelText = [NSString stringWithFormat:@"%@ (%d)", channelName, unread];
+    } else {
+        channelText = channelName;
+    }
+    
+    TUIAttributedString *s = [TUIAttributedString stringWithString:channelText];
+    s.color = [TUIColor blackColor];
+    s.font = mainView.mediumFont;
+    cell.attributedString = s;
+    
+    return cell;
 }
 
 - (void)tableView:(TUITableView *)tableView didClickRowAtIndexPath:(TUIFastIndexPath *)indexPath withEvent:(NSEvent *)event {

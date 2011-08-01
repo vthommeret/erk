@@ -40,6 +40,7 @@
 - (void)doCommand:(NSString *)command;
 - (NSInteger)countChannels;
 - (NSString *)channelNameForRow:(NSInteger)row;
+- (NSMutableDictionary *)channelDataForName:(NSString *)name;
 - (void)setCurrentChannelForRow:(NSInteger)row;
 - (NSInteger)countUsers;
 - (NSString *)userForRow:(NSInteger)row;

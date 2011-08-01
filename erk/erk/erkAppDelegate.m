@@ -124,10 +124,20 @@
     return [[_serverData allKeys] objectAtIndex:row];
 }
 
+- (NSMutableDictionary *)channelDataForName:(NSString *)name {
+    return [_serverData objectForKey:name];
+}
+
 - (void)setCurrentChannelForRow:(NSInteger)row {
     _currentChannel = [self channelNameForRow:row];
+    
+    NSMutableDictionary *channelData = [_serverData objectForKey:_currentChannel];
+    [channelData setValue:[NSNumber numberWithInt:0] forKey:@"unread"];
+    
+    [self.mainView.channelList reloadData];
     [self.mainView.messageList reloadData];
     [self.mainView.userList reloadData];
+    
     [self updateWindowTitle];
 }
 
@@ -168,6 +178,11 @@
         [self.mainView.channelList reloadData];
         _currentChannel = channel;
         [self.mainView.messageList reloadData];
+        
+        NSUInteger row = [[_serverData allKeys] indexOfObject:channel];
+        TUIFastIndexPath *indexPath = [TUIFastIndexPath indexPathForRow:row inSection:0];
+        
+        [self.mainView.channelList.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:TUITableViewScrollPositionToVisible];
         
         [self updateWindowTitle];
     } // else someone else joined
