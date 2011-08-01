@@ -182,7 +182,7 @@
         NSUInteger row = [[_serverData allKeys] indexOfObject:channel];
         TUIFastIndexPath *indexPath = [TUIFastIndexPath indexPathForRow:row inSection:0];
         
-        [self.mainView.channelList.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:TUITableViewScrollPositionToVisible];
+        [self.mainView.channelList selectRowAtIndexPath:indexPath];
         
         [self updateWindowTitle];
     } // else someone else joined
