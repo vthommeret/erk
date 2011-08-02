@@ -8,36 +8,62 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Message : NSObject <NSCopying> {
-	NSString *_text;
-	NSString *_user;
-	NSDate *_time;
+// abstract
+@interface Message : NSObject {
+    NSDate *_time;
 }
 
-- (id)initWithText:(NSString *)text user:(NSString *)user time:(NSDate *)time;
 - (NSString *)getFormattedTime;
 
 @end
 
-@interface TopicMessage : Message {}
+@interface UserMessage : Message {
+    NSString *_text;
+	NSString *_user;
+}
+
+- (id)initWithText:(NSString *)text user:(NSString *)user time:(NSDate *)time;
+
 @end
 
-@interface JoinMessage : Message {}
+@interface TopicMessage : Message {
+    NSString *_topic;
+	NSString *_user;
+}
+
+- (id)initWithTopic:(NSString *)text user:(NSString *)user time:(NSDate *)time;
+
+@end
+
+@interface JoinMessage : Message {
+	NSString *_user;
+}
+
+// needs init and to be implemented
+
 @end
 
 @interface NickMessage : Message {
     NSString *_oldNick;
+    NSString *_newNick;
 }
 
-- (id)initWithOldNick:(NSString *)oldNick text:(NSString *)text user:(NSString *)user time:(NSDate *)time;
+- (id)initWithOldNick:(NSString *)oldNick newNick:(NSString *)newNick time:(NSDate *)time;
 
 @end
 
-@interface ServerMessage : Message {}
+@interface ServerMessage : Message {
+    NSString *_text;
+}
+
+// needs init and implementation (possibly)
+
 @end
 
 @interface NickInUseMessage : ServerMessage {
     NSString *_inUseNick;
 }
-- (id)initWithInUseNick: (NSString *)inUseNick time:(NSDate *)time;
+
+- (id)initWithInUseNick:(NSString *)inUseNick time:(NSDate *)time;
+
 @end

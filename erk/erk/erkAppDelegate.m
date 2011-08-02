@@ -159,8 +159,8 @@
     return 0;
 }
 
-- (NSString *)messageBodyForRow:(NSInteger)row {
-    return [[[[_serverData objectForKey:_currentChannel] objectForKey:@"messages"] objectAtIndex:row] description];
+- (Message *)messageForRow:(NSInteger)row {
+    return [[[_serverData objectForKey:_currentChannel] objectForKey:@"messages"] objectAtIndex:row];
 }
 
 #pragma mark -
@@ -205,7 +205,7 @@
 
     NSMutableArray *messages = [channelData objectForKey:@"messages"];
     
-    Message *message = [[Message alloc] initWithText:text user:sender time:[NSDate date]];
+    UserMessage *message = [[UserMessage alloc] initWithText:text user:sender time:[NSDate date]];
     [messages addObject:message];
     [message release];
     
@@ -223,7 +223,7 @@
     
     NSMutableArray *messages = [channelData objectForKey:@"messages"];
     
-    TopicMessage *message = [[TopicMessage alloc] initWithText:topic user:user time:[NSDate date]];
+    TopicMessage *message = [[TopicMessage alloc] initWithTopic:topic user:user time:[NSDate date]];
     [messages addObject:message];
     [message release];
     
@@ -258,7 +258,7 @@
             [users addObject:nick];            
         }
         
-        NickMessage *message = [[NickMessage alloc] initWithOldNick:user text:@"" user:nick time:[NSDate date]];
+        NickMessage *message = [[NickMessage alloc] initWithOldNick:user newNick:nick time:[NSDate date]];
         [messages addObject:message];
         [message release];
         

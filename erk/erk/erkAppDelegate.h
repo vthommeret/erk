@@ -11,7 +11,7 @@
 #import "TUIKit.h"
 #import "IrcServer.h"
 
-@class MainView;
+@class MainView, Message;
 
 @interface erkAppDelegate : NSObject <NSApplicationDelegate, IrcServerDelegate>
 {
@@ -45,7 +45,7 @@
 - (NSInteger)countUsers;
 - (NSString *)userForRow:(NSInteger)row;
 - (NSInteger)countMessages;
-- (NSString *)messageBodyForRow:(NSInteger)row;
+- (Message *)messageForRow:(NSInteger)row;
 
 - (NSMutableDictionary *)loadChannel:(NSString *)channel;
 

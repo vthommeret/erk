@@ -62,12 +62,12 @@
     
 	MainTableViewCell *cell = reusableTableCellOfClass(tableView, MainTableViewCell);
     
-    NSString *messageBody = [_appDelegate messageBodyForRow:indexPath.row];
+    NSString *messageBody = [[_appDelegate messageForRow:indexPath.row] description];
 
-	TUIAttributedString *s = [TUIAttributedString stringWithString:messageBody];
-	s.color = [TUIColor blackColor];
-	s.font = mainView.mediumFont;
-	cell.attributedString = s;
+	TUIAttributedString *attributedString = [TUIAttributedString stringWithString:messageBody];
+	attributedString.color = [TUIColor blackColor];
+	attributedString.font = mainView.mediumFont;
+	cell.attributedString = attributedString;
     
 	return cell;
 }
