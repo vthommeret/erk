@@ -42,7 +42,15 @@
 	NSString *_user;
 }
 
-// needs init and to be implemented
+- (id)initWithUser:(NSString *)user time:(NSDate *)time;
+
+@end
+
+@interface PartMessage : Message {
+	NSString *_user;
+}
+
+- (id)initWithUser:(NSString *)user time:(NSDate *)time;
 
 @end
 
@@ -55,11 +63,9 @@
 
 @end
 
+// abstract
 @interface ServerMessage : Message {
-    NSString *_text;
 }
-
-// needs init and implementation (possibly)
 
 @end
 

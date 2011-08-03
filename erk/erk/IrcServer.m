@@ -251,6 +251,11 @@
             [_delegate didJoin:[paramsArray objectAtIndex:0] byUser:[prefix objectForKey:@"name"]];
         }
         
+        // part -> didPart
+        else if ([command isEqualToString:kPart] && [_delegate respondsToSelector:@selector(didPart:byUser:)]) {
+            [_delegate didPart:[paramsArray objectAtIndex:0] byUser:[prefix objectForKey:@"name"]];
+        }
+        
         // privmsg -> didSay:to:fromUser
         else if ([command isEqualToString:kPrivMsg]) {
             NSString *displayName = [prefix objectForKey:@"name"];

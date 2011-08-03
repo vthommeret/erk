@@ -22,6 +22,8 @@
     NSMutableDictionary *_serverData;
     NSString *_currentChannel;
     
+    int _unreadAlerts;
+    
     NSManagedObjectContext *_managedObjectContext;
     NSManagedObjectModel *_managedObjectModel;
     NSPersistentStoreCoordinator *_persistentStoreCoordinator;
@@ -49,6 +51,10 @@
 - (NSString *)getNick;
 
 - (NSMutableDictionary *)loadChannel:(NSString *)channel;
+- (void)incrementUnreadAlerts;
+- (void)decrementUnreadAlerts:(int)numAlerts;
+- (void)clearUnreadAlerts;
+- (void)setUnreadAlerts:(int)numAlerts;
 
 - (NSString *)applicationDocumentsDirectory;
 

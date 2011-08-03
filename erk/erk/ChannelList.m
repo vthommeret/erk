@@ -81,19 +81,27 @@
     NSString *channelName = [_appDelegate channelNameForRow:indexPath.row];
     NSMutableDictionary *channelData = [_appDelegate channelDataForName:channelName];
     
-    int unread =  [[channelData objectForKey:@"unread"] intValue];
+    int unreadMessages = [[channelData objectForKey:@"unreadMessages"] intValue];
+    int unreadAlerts = [[channelData objectForKey:@"unreadAlerts"] intValue];
+    
     NSString *channelText;
     
-    if (unread > 0) {
-        channelText = [NSString stringWithFormat:@"%@ (%d)", channelName, unread];
+    if (unreadMessages > 0) {
+        channelText = [NSString stringWithFormat:@"%@ (%d)", channelName, unreadMessages];
     } else {
         channelText = channelName;
     }
     
-    TUIAttributedString *s = [TUIAttributedString stringWithString:channelText];
-    s.color = [TUIColor blackColor];
-    s.font = mainView.mediumFont;
-    cell.attributedString = s;
+    TUIAttributedString *attributedString = [TUIAttributedString stringWithString:channelText];
+    attributedString.font = mainView.mediumFont;
+    
+    if (unreadAlerts > 0) {
+        attributedString.color = [TUIColor purpleColor];
+    } else {
+        attributedString.color = [TUIColor blackColor];
+    }
+    
+    cell.attributedString = attributedString;
     
     return cell;
 }

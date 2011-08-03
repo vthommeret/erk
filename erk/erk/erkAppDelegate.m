@@ -47,6 +47,8 @@
             self.serverData = serverData;
             [serverData release];            
         }
+        
+        _unreadAlerts = 0;
     }
     return self;
 }
@@ -92,6 +94,15 @@
     [_window makeKeyAndOrderFront:nil];
 }
 
+- (void)applicationDidBecomeActive:(NSNotification *)notification {
+    NSMutableDictionary *channelData = [_serverData objectForKey:_currentChannel];
+    
+    [self decrementUnreadAlerts:[[channelData objectForKey:@"unreadAlerts"] intValue]];
+    
+    [channelData setValue:[NSNumber numberWithInt:0] forKey:@"unreadAlerts"];
+    [self.mainView.channelList reloadData];
+}
+
 - (void)updateWindowTitle {
     NSMutableDictionary *channelData = [_serverData objectForKey:_currentChannel];
     NSString *topic = [channelData objectForKey:@"topic"];
@@ -132,7 +143,11 @@
     _currentChannel = [self channelNameForRow:row];
     
     NSMutableDictionary *channelData = [_serverData objectForKey:_currentChannel];
-    [channelData setValue:[NSNumber numberWithInt:0] forKey:@"unread"];
+    
+    [self decrementUnreadAlerts:[[channelData objectForKey:@"unreadAlerts"] intValue]];
+    
+    [channelData setValue:[NSNumber numberWithInt:0] forKey:@"unreadMessages"];
+    [channelData setValue:[NSNumber numberWithInt:0] forKey:@"unreadAlerts"];
     
     [self.mainView.channelList reloadData];
     [self.mainView.messageList reloadData];
@@ -189,13 +204,52 @@
         [self.mainView.channelList selectRowAtIndexPath:indexPath];
         
         [self updateWindowTitle];
-    } // else someone else joined
+    } else {
+        NSMutableDictionary *channelData = [_serverData objectForKey:channel];
+        
+        NSMutableArray *users = [channelData objectForKey:@"users"];
+        [users addObject:user];
+        
+        NSMutableArray *messages = [channelData objectForKey:@"messages"];
+        
+        JoinMessage *message = [[JoinMessage alloc] initWithUser:user time:[NSDate date]];
+        [messages addObject:message];
+        [message release];
+        
+        if ([channel isEqualToString:_currentChannel]) {
+            [self.mainView.messageList reloadData];
+            [self.mainView.userList reloadData];
+        }
+    }
+}
+
+- (void)didPart:(NSString *)channel byUser:(NSString *)user {
+    if ([_serverData objectForKey:channel] == nil) { // I joined
+        // do something
+    } else {
+        NSMutableDictionary *channelData = [_serverData objectForKey:channel];
+        
+        NSMutableArray *users = [channelData objectForKey:@"users"];
+        [users removeObject:user];
+        
+        NSMutableArray *messages = [channelData objectForKey:@"messages"];
+        
+        PartMessage *message = [[PartMessage alloc] initWithUser:user time:[NSDate date]];
+        [messages addObject:message];
+        [message release];
+        
+        if ([channel isEqualToString:_currentChannel]) {
+            [self.mainView.messageList reloadData];
+            [self.mainView.userList reloadData];
+        }
+    }
 }
 
 - (void)didSay:(NSString *)text to:(NSString *)recipient fromUser:(NSString *)sender {
     NSString *channel;
+    NSString *currentNick = [self getNick];
     
-    if ([recipient isEqual:[_server getNick]]) { // private message
+    if ([recipient isEqual:currentNick]) { // private message
         channel = sender;
     } else { // channel message
         channel = recipient;
@@ -213,11 +267,36 @@
     [messages addObject:message];
     [message release];
     
-    if ([channel isEqual:_currentChannel]) {
+    if ([channel isEqualToString:_currentChannel]) {
         [self.mainView.messageList reloadData];
     } else {
-        NSNumber *unread = [channelData objectForKey:@"unread"];
-        [channelData setObject:[NSNumber numberWithInt:([unread intValue] + 1)] forKey:@"unread"];
+        NSNumber *unreadMessages = [channelData objectForKey:@"unreadMessages"];
+        [channelData setObject:[NSNumber numberWithInt:([unreadMessages intValue] + 1)] forKey:@"unreadMessages"];
+        [self.mainView.channelList reloadData];
+    }
+    
+    bool appIsInactive = (![NSApp isActive]);
+    bool channelIsInactive = (![channel isEqualToString:_currentChannel]);
+    bool shouldAlert = ([text rangeOfString:[self getNick]].location != NSNotFound);
+    
+    if ((appIsInactive || channelIsInactive) && shouldAlert) {
+        [self performSelectorOnMainThread:@selector(incrementUnreadAlerts) withObject:nil waitUntilDone:NO];
+        
+        SEL requestUserAttention = @selector(requestUserAttention:);
+        NSRequestUserAttentionType attentionType = NSInformationalRequest;
+        
+        NSMethodSignature *signature = [NSApplication instanceMethodSignatureForSelector:requestUserAttention];
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+        
+        [invocation setTarget:NSApp];
+        [invocation setSelector:requestUserAttention];
+        [invocation setArgument:&attentionType atIndex:2];
+        
+        [invocation performSelectorOnMainThread:@selector(invoke) withObject:nil waitUntilDone:NO];
+        
+        int unreadAlerts = [[channelData objectForKey:@"unreadAlerts"] intValue];
+        [channelData setObject:[NSNumber numberWithInt:unreadAlerts + 1] forKey:@"unreadAlerts"];
+        
         [self.mainView.channelList reloadData];
     }
 }
@@ -290,15 +369,39 @@
     NSMutableArray *messages = [[NSMutableArray alloc] initWithCapacity:10];
     NSMutableArray *users = [[NSMutableArray alloc] initWithCapacity:10];
     
-    NSMutableDictionary *channelData = [NSMutableDictionary dictionaryWithObjectsAndKeys:messages, @"messages",
+    NSMutableDictionary *channelData = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                        messages, @"messages",
                                         users, @"users",
-                                        [NSNumber numberWithInt:0], @"unread", nil];
+                                        [NSNumber numberWithInt:0], @"unreadMessages",
+                                        [NSNumber numberWithInt:0], @"unreadAlerts",
+                                        nil];
     [messages release];
     [users release];
     
     [_serverData setObject:channelData forKey:channel];
     
     return channelData;
+}
+
+- (void)incrementUnreadAlerts {
+    [self setUnreadAlerts:_unreadAlerts + 1];
+}
+
+- (void)decrementUnreadAlerts:(int)numAlerts {
+    [self setUnreadAlerts:_unreadAlerts - numAlerts];
+}
+
+- (void)clearUnreadAlerts {
+    [self setUnreadAlerts:0];
+}
+
+- (void)setUnreadAlerts:(int)numAlerts {
+    _unreadAlerts = numAlerts;
+    if (_unreadAlerts > 0) {
+        [NSApp dockTile].badgeLabel = [NSString stringWithFormat:@"%lu", _unreadAlerts];
+    } else {
+        [NSApp dockTile].badgeLabel = nil;
+    }
 }
 
 #pragma mark -

@@ -15,6 +15,7 @@
 #define kNick		@"NICK"
 #define kUser		@"USER"
 #define kJoin		@"JOIN"
+#define kPart		@"PART"
 #define kPrivMsg	@"PRIVMSG"
 #define kPrivMsg	@"PRIVMSG"
 #define kTopic		@"TOPIC"
@@ -78,6 +79,7 @@
 
 - (void)didConnect;
 - (void)didJoin:(NSString *)channel byUser:(NSString *)user;
+- (void)didPart:(NSString *)channel byUser:(NSString *)user;
 - (void)didSay:(NSString *)msg to:(NSString *)recipient fromUser:(NSString *)user;
 - (void)didTopic:(NSString *)topic onChannel:(NSString *)channel fromUser:(NSString *)user;
 - (void)didNames:(NSArray *)names forChannel:(NSString *)channel;

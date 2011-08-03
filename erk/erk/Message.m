@@ -84,8 +84,42 @@
 
 @implementation JoinMessage
 
+- (id)initWithUser:(NSString *)user time:(NSDate *)time {
+    if ((self = [super init])) {
+        _user = [user copy];
+        _time = [time retain];
+    }
+    return self;
+}
+
+- (void)dealloc {
+    [_user release];
+    [super dealloc];
+}
+
 - (NSString *)description {
 	return [NSString stringWithFormat:@"%@ %@ entered the chat room", [self getFormattedTime], _user];
+}
+
+@end
+
+@implementation PartMessage
+
+- (id)initWithUser:(NSString *)user time:(NSDate *)time {
+    if ((self = [super init])) {
+        _user = [user copy];
+        _time = [time retain];
+    }
+    return self;
+}
+
+- (void)dealloc {
+    [_user release];
+    [super dealloc];
+}
+
+- (NSString *)description {
+	return [NSString stringWithFormat:@"%@ %@ left the chat room", [self getFormattedTime], _user];
 }
 
 @end
@@ -114,25 +148,6 @@
 @end
 
 @implementation ServerMessage
-
-- (id)initWithText:(NSString *)text time:(NSDate *)time {
-    if ((self = [super init])) {
-        _text = [text copy];
-        _time = [time retain];
-    }
-    return self;
-}
-
-- (void)dealloc {
-    [_text release];
-    [super dealloc];
-}
-
-- (NSString *)description {
-    NSString *description = [[NSString alloc] initWithFormat:@"%@ Server: %@", [self getFormattedTime], _text];
-    return [description autorelease];   
-}
-
 @end
 
 // TODO: Is NickInUseMessage a ServerMessage since it doesn't have text?
