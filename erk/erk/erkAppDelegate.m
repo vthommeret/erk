@@ -35,6 +35,7 @@
         NSString *user = [defaults stringForKey:@"user"];
         NSString *name = [defaults stringForKey:@"name"];
         NSString *serverPass = [defaults stringForKey:@"serverPass"];
+        NSArray *autojoinChannels = [defaults arrayForKey:@"autojoinChannels"];
         
         if (host && port && nick && user && name && serverPass) {
             _server = [[IrcServer alloc] initWithHost:host port:port
@@ -43,9 +44,11 @@
                                            serverPass:serverPass
                                              delegate:self];
             
+            _autojoinChannels = [autojoinChannels retain];
+            
             NSMutableDictionary *serverData = [[NSMutableDictionary alloc] initWithCapacity:10];
             self.serverData = serverData;
-            [serverData release];            
+            [serverData release];
         }
         
         _unreadAlerts = 0;
@@ -60,6 +63,7 @@
     
     [_server release];
     [_serverData release];
+    [_autojoinChannels release];
     
     [_managedObjectContext release];
     [_managedObjectModel release];
@@ -163,6 +167,24 @@
     return 0;
 }
 
+- (void)sortUsers {
+    if (_currentChannel != nil) {
+        NSString *currentNick = [self getNick];
+        NSMutableDictionary *channelData = [_serverData objectForKey:_currentChannel];
+        
+        NSMutableArray *users = [channelData objectForKey:@"users"];
+        
+        NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"description" ascending:YES];
+        NSMutableArray *sortedUsers = [[users sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]] mutableCopy];
+        [sortDescriptor release];
+        
+        [sortedUsers removeObject:currentNick];
+        [sortedUsers insertObject:currentNick atIndex:0];
+        
+        [channelData setObject:sortedUsers forKey:@"users"];
+    }
+}
+
 - (NSString *)userForRow:(NSInteger)row {
     return [[[_serverData objectForKey:_currentChannel] objectForKey:@"users"] objectAtIndex:row];
 }
@@ -189,6 +211,10 @@
 
 - (void)didConnect {
     [_server join:@"#vernon"];
+    
+    for (NSString *channel in _autojoinChannels) {
+        [_server join:channel];
+    }
 }
 
 - (void)didJoin:(NSString *)channel byUser:(NSString *)user {

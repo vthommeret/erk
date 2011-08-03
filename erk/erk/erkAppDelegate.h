@@ -21,6 +21,7 @@
     IrcServer *_server;
     NSMutableDictionary *_serverData;
     NSString *_currentChannel;
+    NSArray *_autojoinChannels;
     
     int _unreadAlerts;
     
@@ -45,6 +46,7 @@
 - (NSMutableDictionary *)channelDataForName:(NSString *)name;
 - (void)setCurrentChannelForRow:(NSInteger)row;
 - (NSInteger)countUsers;
+- (void)sortUsers;
 - (NSString *)userForRow:(NSInteger)row;
 - (NSInteger)countMessages;
 - (Message *)messageForRow:(NSInteger)row;
