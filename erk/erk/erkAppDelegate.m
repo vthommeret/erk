@@ -163,6 +163,10 @@
     return [[[_serverData objectForKey:_currentChannel] objectForKey:@"messages"] objectAtIndex:row];
 }
 
+- (NSString *)getNick {
+    return [_server getNick];
+}
+
 #pragma mark -
 #pragma mark IrcServerDelegate methods
 

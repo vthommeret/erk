@@ -46,6 +46,7 @@
 - (NSString *)userForRow:(NSInteger)row;
 - (NSInteger)countMessages;
 - (Message *)messageForRow:(NSInteger)row;
+- (NSString *)getNick;
 
 - (NSMutableDictionary *)loadChannel:(NSString *)channel;
 

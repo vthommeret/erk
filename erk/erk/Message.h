@@ -22,6 +22,9 @@
 	NSString *_user;
 }
 
+@property (nonatomic, readonly) NSString *text;
+@property (nonatomic, readonly) NSString *user;
+
 - (id)initWithText:(NSString *)text user:(NSString *)user time:(NSDate *)time;
 
 @end

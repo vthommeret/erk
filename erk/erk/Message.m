@@ -31,6 +31,9 @@
 
 @implementation UserMessage
 
+@synthesize text = _text;
+@synthesize user = _user;
+
 - (id)initWithText:(NSString *)text user:(NSString *)user time:(NSDate *)time {
 	if ((self = [super init])) {
 		_text = [text copy];

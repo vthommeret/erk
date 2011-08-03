@@ -12,6 +12,7 @@
 
 #import "ChannelList.h"
 #import "UserList.h"
+#import "Message.h"
 
 @implementation MessageList
 
@@ -62,12 +63,44 @@
     
 	MainTableViewCell *cell = reusableTableCellOfClass(tableView, MainTableViewCell);
     
-    NSString *messageBody = [[_appDelegate messageForRow:indexPath.row] description];
-
-	TUIAttributedString *attributedString = [TUIAttributedString stringWithString:messageBody];
-	attributedString.color = [TUIColor blackColor];
-	attributedString.font = mainView.mediumFont;
-	cell.attributedString = attributedString;
+    Message *message = [_appDelegate messageForRow:indexPath.row];
+    TUIAttributedString *attributedString;
+    
+    // TODO: Have subclasses of MainTableViewCell that are initialized with different type of messages and do appropriate drawing.
+    
+    if ([message class] == [UserMessage class]) {
+        UserMessage *userMessage = (UserMessage *)message;
+        
+        NSString *prefix = [NSString stringWithFormat:@"%@ %@: ", [message getFormattedTime], userMessage.user];
+        NSString *messageBody = [NSString stringWithFormat:@"%@%@", prefix, userMessage.text];
+        
+        attributedString = [TUIAttributedString stringWithString:messageBody];
+        attributedString.color = [TUIColor blackColor];
+        attributedString.font = mainView.mediumFont;
+        
+        NSString *currentNick = [_appDelegate getNick];
+        
+        if (userMessage.user != currentNick) {
+            NSUInteger start = [prefix length];
+            NSUInteger len = [messageBody length];
+            
+            NSRange checkRange = NSMakeRange(start, len - start);
+            NSRange foundRange;
+            
+            while ((foundRange = [messageBody rangeOfString:currentNick options:NSCaseInsensitiveSearch range:checkRange]).location != NSNotFound) {
+                // TODO: change purpleColor to highlightColor in some decorator class.
+                
+                [attributedString setColor:[TUIColor purpleColor] inRange:foundRange];
+                checkRange = NSMakeRange(foundRange.location + foundRange.length, len - foundRange.location - foundRange.length);
+            }
+        }
+    } else {
+        attributedString = [TUIAttributedString stringWithString:[message description]];
+        attributedString.color = [TUIColor blackColor];
+        attributedString.font = mainView.mediumFont;
+    }
+    
+    cell.attributedString = attributedString;
     
 	return cell;
 }
