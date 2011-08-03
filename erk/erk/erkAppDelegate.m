@@ -36,6 +36,7 @@
         NSString *name = [defaults stringForKey:@"name"];
         NSString *serverPass = [defaults stringForKey:@"serverPass"];
         NSArray *autojoinChannels = [defaults arrayForKey:@"autojoinChannels"];
+        NSArray *highlightWords = [defaults arrayForKey:@"highlightWords"];
         
         if (host && port && nick && user && name && serverPass) {
             _server = [[IrcServer alloc] initWithHost:host port:port
@@ -45,6 +46,7 @@
                                              delegate:self];
             
             _autojoinChannels = [autojoinChannels retain];
+            _highlightWords = [highlightWords retain];
             
             NSMutableDictionary *serverData = [[NSMutableDictionary alloc] initWithCapacity:10];
             self.serverData = serverData;
@@ -64,6 +66,8 @@
     [_server release];
     [_serverData release];
     [_autojoinChannels release];
+    
+    [_highlightWords release];
     
     [_managedObjectContext release];
     [_managedObjectModel release];
@@ -200,8 +204,13 @@
     return [[[_serverData objectForKey:_currentChannel] objectForKey:@"messages"] objectAtIndex:row];
 }
 
+// TODO: per Objective-C convention "get" should only be used for getting things into a pointer.
 - (NSString *)getNick {
     return [_server getNick];
+}
+
+- (NSArray *)highlightWords {
+    return _highlightWords;
 }
 
 #pragma mark -
@@ -303,7 +312,16 @@
     
     bool appIsInactive = (![NSApp isActive]);
     bool channelIsInactive = (![channel isEqualToString:_currentChannel]);
-    bool shouldAlert = ([text rangeOfString:[self getNick]].location != NSNotFound);
+    bool shouldAlert = ([text rangeOfString:[self getNick] options:NSCaseInsensitiveSearch].location != NSNotFound);
+    
+    if (!shouldAlert) {
+        for (NSString *highlightWord in _highlightWords) {
+            if ([text rangeOfString:highlightWord options:NSCaseInsensitiveSearch].location != NSNotFound) {
+                shouldAlert = YES;
+                break;
+            }
+        }
+    }
     
     if ((appIsInactive || channelIsInactive) && shouldAlert) {
         [self performSelectorOnMainThread:@selector(incrementUnreadAlerts) withObject:nil waitUntilDone:NO];

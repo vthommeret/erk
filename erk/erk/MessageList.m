@@ -84,14 +84,21 @@
             NSUInteger start = [prefix length];
             NSUInteger len = [messageBody length];
             
-            NSRange checkRange = NSMakeRange(start, len - start);
+            NSRange checkRange;
             NSRange foundRange;
             
-            while ((foundRange = [messageBody rangeOfString:currentNick options:NSCaseInsensitiveSearch range:checkRange]).location != NSNotFound) {
-                // TODO: change purpleColor to highlightColor in some decorator class.
+            NSMutableArray *highlightWords = [[_appDelegate highlightWords] mutableCopy];
+            [highlightWords addObject:currentNick];
+            
+            for (NSString *highlightWord in highlightWords) {
+                checkRange = NSMakeRange(start, len - start);
                 
-                [attributedString setColor:[TUIColor purpleColor] inRange:foundRange];
-                checkRange = NSMakeRange(foundRange.location + foundRange.length, len - foundRange.location - foundRange.length);
+                while ((foundRange = [messageBody rangeOfString:highlightWord options:NSCaseInsensitiveSearch range:checkRange]).location != NSNotFound) {
+                    // TODO: change purpleColor to highlightColor in some decorator class.
+                    
+                    [attributedString setColor:[TUIColor purpleColor] inRange:foundRange];
+                    checkRange = NSMakeRange(foundRange.location + foundRange.length, len - foundRange.location - foundRange.length);
+                }
             }
         }
     } else {

@@ -23,6 +23,8 @@
     NSString *_currentChannel;
     NSArray *_autojoinChannels;
     
+    NSArray *_highlightWords;
+    
     int _unreadAlerts;
     
     NSManagedObjectContext *_managedObjectContext;
@@ -51,6 +53,7 @@
 - (NSInteger)countMessages;
 - (Message *)messageForRow:(NSInteger)row;
 - (NSString *)getNick;
+- (NSArray *)highlightWords;
 
 - (NSMutableDictionary *)loadChannel:(NSString *)channel;
 - (void)incrementUnreadAlerts;
