@@ -17,7 +17,6 @@
 #define kJoin		@"JOIN"
 #define kPart		@"PART"
 #define kPrivMsg	@"PRIVMSG"
-#define kPrivMsg	@"PRIVMSG"
 #define kTopic		@"TOPIC"
 #define kSay		@"SAY"
 #define kMsg        @"MSG"
@@ -45,8 +44,6 @@
 	NSString *_name;
 	NSString *_serverPass;
 	id<IrcServerDelegate> _delegate;
-	
-	NSMutableDictionary *_messages;
 }
 
 @property (nonatomic, assign) BOOL connected;

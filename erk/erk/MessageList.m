@@ -40,7 +40,7 @@
 }
 
 - (void)reloadData {
-    [_tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+    [_tableView reloadData];
 }
 
 #pragma mark -
@@ -100,6 +100,8 @@
                     checkRange = NSMakeRange(foundRange.location + foundRange.length, len - foundRange.location - foundRange.length);
                 }
             }
+            
+            [highlightWords release];
         }
     } else {
         attributedString = [TUIAttributedString stringWithString:[message description]];

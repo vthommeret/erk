@@ -125,7 +125,7 @@
         title = [NSString stringWithFormat:@"%@ — %@", _currentChannel, topic];
     }
     
-    [_window performSelectorOnMainThread:@selector(setTitle:) withObject:title waitUntilDone:NO];
+    [_window setTitle:title];
 }
 
 #pragma mark -
@@ -188,6 +188,7 @@
         [sortedUsers insertObject:currentNick atIndex:0];
         
         [channelData setObject:sortedUsers forKey:@"users"];
+        [sortedUsers release];
     }
 }
 
@@ -222,7 +223,6 @@
 
 - (void)didConnect {
     [_server join:@"#vernon"];
-    
     for (NSString *channel in _autojoinChannels) {
         [_server join:channel];
     }
@@ -326,10 +326,10 @@
     }
     
     if ((appIsInactive || channelIsInactive) && shouldAlert) {
-        [self performSelectorOnMainThread:@selector(incrementUnreadAlerts) withObject:nil waitUntilDone:NO];
+        [self incrementUnreadAlerts];
         
         // bounce the icon
-        [[NSInvocation invokeOnMainThreadWithTarget:NSApp] requestUserAttention:NSInformationalRequest];
+        [NSApp requestUserAttention:NSInformationalRequest];
         
         int unreadAlerts = [[channelData objectForKey:@"unreadAlerts"] intValue];
         [channelData setObject:[NSNumber numberWithInt:unreadAlerts + 1] forKey:@"unreadAlerts"];

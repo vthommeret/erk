@@ -8,6 +8,7 @@
 
 #import "IrcServer.h"
 #import "GCDAsyncSocket.h"
+#import "NSInvocation+ForwardedConstruction.h"
 
 @implementation IrcServer
 
@@ -31,18 +32,16 @@
         _socketQueue = dispatch_queue_create("SocketQueue", NULL);
         _serverSocket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:_socketQueue];
         _connected = NO;
-        
-        _messages = [[NSMutableDictionary alloc] initWithCapacity:10];
     }
     return self;
 }
 
 - (void)dealloc {
-    [_host dealloc];
-    [_nick dealloc];
-    [_user dealloc];
-    [_serverPass dealloc];
-    [_serverSocket dealloc];
+    [_host release];
+    [_nick release];
+    [_user release];
+    [_serverPass release];
+    [_serverSocket release];
     [super dealloc];
 }
 
@@ -98,7 +97,6 @@
                     // said empty string to the empty string channel
                 }
             }
-            
         } else {
             // was an empty string command
         }
@@ -113,7 +111,8 @@
     [self writeCommand:kPrivMsg withValues:[NSArray arrayWithObjects:channel, msg, nil]];
     
     if ([_delegate respondsToSelector:@selector(didSay:to:fromUser:)]) {
-        [_delegate didSay:msg to:channel fromUser:_nick];
+        [[NSInvocation invokeOnMainThreadWithTarget:_delegate]
+            didSay:[NSString stringWithString:msg] to:[NSString stringWithString:channel] fromUser:[NSString stringWithString:_nick]];
     }
 }
 
@@ -243,17 +242,21 @@
         // welcome -> didConnect
         else if ([command isEqualToString:kWelcome] && [_delegate respondsToSelector:@selector(didConnect)]) {
             _connected = YES;
-            [_delegate didConnect];
+            [[NSInvocation invokeOnMainThreadWithTarget:_delegate] didConnect];
         }
         
         // join -> didJoin
         else if ([command isEqualToString:kJoin] && [_delegate respondsToSelector:@selector(didJoin:byUser:)]) {
-            [_delegate didJoin:[paramsArray objectAtIndex:0] byUser:[prefix objectForKey:@"name"]];
+            [[NSInvocation invokeOnMainThreadWithTarget:_delegate]
+                didJoin:[NSString stringWithString:[paramsArray objectAtIndex:0]]
+                 byUser:[NSString stringWithString:[prefix objectForKey:@"name"]]];
         }
         
         // part -> didPart
         else if ([command isEqualToString:kPart] && [_delegate respondsToSelector:@selector(didPart:byUser:)]) {
-            [_delegate didPart:[paramsArray objectAtIndex:0] byUser:[prefix objectForKey:@"name"]];
+            [[NSInvocation invokeOnMainThreadWithTarget:_delegate]
+                didPart:[NSString stringWithString:[paramsArray objectAtIndex:0]]
+                byUser:[NSString stringWithString:[prefix objectForKey:@"name"]]];
         }
         
         // privmsg -> didSay:to:fromUser
@@ -263,7 +266,10 @@
             NSString *recipient = [paramsArray objectAtIndex:0];
             
             if ([_delegate respondsToSelector:@selector(didSay:to:fromUser:)]) {
-                [_delegate didSay:msg to:recipient fromUser:displayName];
+                [[NSInvocation invokeOnMainThreadWithTarget:_delegate]
+                    didSay:[NSString stringWithString:msg]
+                        to:[NSString stringWithString:recipient]
+                  fromUser:[NSString stringWithString:displayName]];
             }
         }
         
@@ -274,7 +280,10 @@
             NSString *user = [prefix objectForKey:@"name"];
             
             if ([_delegate respondsToSelector:@selector(didTopic:onChannel:fromUser:)]) {
-                [_delegate didTopic:topic onChannel:channel fromUser:user];
+                [[NSInvocation invokeOnMainThreadWithTarget:_delegate]
+                    didTopic:[NSString stringWithString:topic]
+                   onChannel:[NSString stringWithString:channel]
+                    fromUser:[NSString stringWithString:user]];
             }
         }
         
@@ -285,7 +294,9 @@
             NSArray *names = [namesString componentsSeparatedByString:@" "];
             
             if ([_delegate respondsToSelector:@selector(didNames:forChannel:)]) {
-                [_delegate didNames:names forChannel:channel];
+                [[NSInvocation invokeOnMainThreadWithTarget:_delegate]
+                    didNames:[NSArray arrayWithArray:names]
+                  forChannel:[NSString stringWithString:channel]];
             }
         }
         
@@ -295,7 +306,10 @@
             NSString *channel = [paramsArray objectAtIndex:([paramsArray count] - 2)];
             
             if ([_delegate respondsToSelector:@selector(didTopic:onChannel:fromUser:)]) {
-                [_delegate didTopic:topic onChannel:channel fromUser:nil];
+                [[NSInvocation invokeOnMainThreadWithTarget:_delegate]
+                    didTopic:[NSString stringWithString:topic]
+                   onChannel:[NSString stringWithString:channel]
+                    fromUser:nil];
             }
         }
         
@@ -308,7 +322,9 @@
             }
             
             if ([_delegate respondsToSelector:@selector(didNick:fromUser:)]) {
-                [_delegate didNick:nick fromUser:oldNick];
+                [[NSInvocation invokeOnMainThreadWithTarget:_delegate]
+                    didNick:[NSString stringWithString:nick]
+                   fromUser:[NSString stringWithString:oldNick]];
             }
 
         }
@@ -317,7 +333,8 @@
             NSString *inUseNick = [paramsArray objectAtIndex:1];
             
             if ([_delegate respondsToSelector:@selector(didNickInUse:)]) {
-                [_delegate didNickInUse:inUseNick];
+                [[NSInvocation invokeOnMainThreadWithTarget:_delegate]
+                    didNickInUse:[NSString stringWithString:inUseNick]];
             }
         }
         

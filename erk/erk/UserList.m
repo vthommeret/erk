@@ -37,7 +37,7 @@
 
 - (void)reloadData {
     [_appDelegate sortUsers];
-    [_tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+    [_tableView reloadData];
 }
 
 #pragma mark -

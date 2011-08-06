@@ -37,7 +37,7 @@
 }
 
 - (void)reloadData {
-    [_tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+    [_tableView reloadData];
 }
 
 - (void)selectRowAtIndexPath:(TUIFastIndexPath *)indexPath {

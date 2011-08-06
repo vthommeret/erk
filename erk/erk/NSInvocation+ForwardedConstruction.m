@@ -267,11 +267,11 @@
 	if ([forwardedInvocation target] == self) {
 		[forwardedInvocation setTarget:target];
 		*invocation = forwardedInvocation;
-		if (retainArguments) {
+		if (retainArguments || invokeOnMainThread) {
 			[*invocation retainArguments];
-		}
-        if (invokeOnMainThread) {
-            [*invocation performSelectorOnMainThread:@selector(invoke) withObject:nil waitUntilDone:NO];
+            if (invokeOnMainThread) {
+                [*invocation performSelectorOnMainThread:@selector(invoke) withObject:nil waitUntilDone:NO];
+            }
         }
 		return;
 	}
