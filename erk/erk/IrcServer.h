@@ -58,6 +58,7 @@
 - (void)privMsg:(NSString *)msg toChannel:(NSString *)channel;
 - (void)topic:(NSString *)topic onChannel:(NSString *)channel;
 - (void)nick:(NSString *)nick;
+- (void)partWithChannels:(NSArray *)channels;
 
 - (NSString *)getNick;
 
@@ -82,5 +83,7 @@
 - (void)didNames:(NSArray *)names forChannel:(NSString *)channel;
 - (void)didNick:(NSString *)nick fromUser:(NSString *)user;
 - (void)didNickInUse:(NSString *)nick;
+
+- (NSString *)getCurrentChannel;
 
 @end
