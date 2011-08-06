@@ -9,6 +9,7 @@
 #import "ChannelList.h"
 #import "MainView.h"
 #import "MainTableViewCell.h"
+#import "NSInvocation+ForwardedConstruction.h"
 
 @implementation ChannelList
 
@@ -40,24 +41,9 @@
 }
 
 - (void)selectRowAtIndexPath:(TUIFastIndexPath *)indexPath {
-    SEL selectRow = @selector(selectRowAtIndexPath:animated:scrollPosition:);
-    
-    bool animated = YES;
-    TUITableViewScrollPosition scrollPosition = TUITableViewScrollPositionToVisible;
-    
-    // Agh.. this is messy. Look into http://cocoawithlove.com/2008/03/construct-nsinvocation-for-any-message.html
-    // but less hacky, since we'll probably have to do this a lot.
-    
-    NSMethodSignature *signature = [TUITableView instanceMethodSignatureForSelector:selectRow];
-    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-    
-    [invocation setTarget:self.tableView];
-    [invocation setSelector:selectRow];
-    [invocation setArgument:&indexPath atIndex:2];
-    [invocation setArgument:&animated atIndex:3];
-    [invocation setArgument:&scrollPosition atIndex:4];
-    
-    [invocation performSelectorOnMainThread:@selector(invoke) withObject:nil waitUntilDone:NO];
+    [[NSInvocation invokeOnMainThreadWithTarget:self.tableView] selectRowAtIndexPath:indexPath
+                                                                            animated:YES
+                                                                      scrollPosition:TUITableViewScrollPositionToVisible];
 }
 
 #pragma mark -

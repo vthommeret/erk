@@ -81,6 +81,7 @@
 		3D288ADD13C18AF100F137BC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D288ADC13C18AF100F137BC /* Security.framework */; };
 		3D288AE813C198BD00F137BC /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288AE713C198BD00F137BC /* Message.m */; };
 		3D288AFD13C22FB100F137BC /* MessageToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288AFC13C22FB000F137BC /* MessageToolbar.m */; };
+		3D90CD5513ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD5413ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m */; };
 		9826AB3F13D651640021B950 /* erkDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9826AB3D13D651640021B950 /* erkDataModel.xcdatamodeld */; };
 		9826AB4213D658320021B950 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9826AB4113D658320021B950 /* CoreData.framework */; };
 /* End PBXBuildFile section */
@@ -234,6 +235,8 @@
 		3D288AE713C198BD00F137BC /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
 		3D288AFB13C22FAF00F137BC /* MessageToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageToolbar.h; sourceTree = "<group>"; };
 		3D288AFC13C22FB000F137BC /* MessageToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageToolbar.m; sourceTree = "<group>"; };
+		3D90CD5313ED9A4100B328CA /* NSInvocation+ForwardedConstruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInvocation+ForwardedConstruction.h"; sourceTree = "<group>"; };
+		3D90CD5413ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInvocation+ForwardedConstruction.m"; sourceTree = "<group>"; };
 		9826AB3E13D651640021B950 /* erkDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = erkDataModel.xcdatamodel; sourceTree = "<group>"; };
 		9826AB4113D658320021B950 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -316,8 +319,9 @@
 				3D288AC513C1894600F137BC /* IrcServer.m */,
 				3D288AEA13C198C200F137BC /* Models */,
 				3D288A8813C16BBC00F137BC /* Views */,
-				3D2889B113C1653100F137BC /* MainMenu.xib */,
+				3D90CD5213ED99E000B328CA /* Utility */,
 				3D2889A313C1653100F137BC /* Supporting Files */,
+				3D2889B113C1653100F137BC /* MainMenu.xib */,
 				9826AB3D13D651640021B950 /* erkDataModel.xcdatamodeld */,
 			);
 			path = erk;
@@ -529,6 +533,15 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
+		3D90CD5213ED99E000B328CA /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				3D90CD5313ED9A4100B328CA /* NSInvocation+ForwardedConstruction.h */,
+				3D90CD5413ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m */,
+			);
+			name = Utility;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -701,6 +714,7 @@
 				3D288AE813C198BD00F137BC /* Message.m in Sources */,
 				3D288AFD13C22FB100F137BC /* MessageToolbar.m in Sources */,
 				9826AB3F13D651640021B950 /* erkDataModel.xcdatamodeld in Sources */,
+				3D90CD5513ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
