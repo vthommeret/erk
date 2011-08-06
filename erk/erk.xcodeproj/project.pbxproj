@@ -79,9 +79,19 @@
 		3D288AD913C18A9D00F137BC /* DDLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288AD213C18A9D00F137BC /* DDLog.m */; };
 		3D288ADA13C18A9D00F137BC /* DDTTYLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288AD413C18A9D00F137BC /* DDTTYLogger.m */; };
 		3D288ADD13C18AF100F137BC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D288ADC13C18AF100F137BC /* Security.framework */; };
-		3D288AE813C198BD00F137BC /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288AE713C198BD00F137BC /* Message.m */; };
 		3D288AFD13C22FB100F137BC /* MessageToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288AFC13C22FB000F137BC /* MessageToolbar.m */; };
 		3D90CD5513ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD5413ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m */; };
+		3D90CD5813EDF3C000B328CA /* Channel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD5713EDF3C000B328CA /* Channel.m */; };
+		3D90CD5B13EDF3C100B328CA /* PartMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD5A13EDF3C100B328CA /* PartMessage.m */; };
+		3D90CD5E13EDF3C200B328CA /* NickMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD5D13EDF3C100B328CA /* NickMessage.m */; };
+		3D90CD6113EDF3C200B328CA /* NickInUseMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD6013EDF3C200B328CA /* NickInUseMessage.m */; };
+		3D90CD6413EDF3C300B328CA /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD6313EDF3C200B328CA /* User.m */; };
+		3D90CD6713EDF3C300B328CA /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD6613EDF3C300B328CA /* Message.m */; };
+		3D90CD6A13EDF3C300B328CA /* JoinMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD6913EDF3C300B328CA /* JoinMessage.m */; };
+		3D90CD6D13EDF3C400B328CA /* UserMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD6C13EDF3C400B328CA /* UserMessage.m */; };
+		3D90CD7013EDF3C400B328CA /* Server.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD6F13EDF3C400B328CA /* Server.m */; };
+		3D90CD7313EDF3C400B328CA /* TopicMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD7213EDF3C400B328CA /* TopicMessage.m */; };
+		3D90CD7613EDF3C500B328CA /* ServerMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD7513EDF3C400B328CA /* ServerMessage.m */; };
 		9826AB3F13D651640021B950 /* erkDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9826AB3D13D651640021B950 /* erkDataModel.xcdatamodeld */; };
 		9826AB4213D658320021B950 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9826AB4113D658320021B950 /* CoreData.framework */; };
 /* End PBXBuildFile section */
@@ -231,12 +241,32 @@
 		3D288AD313C18A9D00F137BC /* DDTTYLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDTTYLogger.h; sourceTree = "<group>"; };
 		3D288AD413C18A9D00F137BC /* DDTTYLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDTTYLogger.m; sourceTree = "<group>"; };
 		3D288ADC13C18AF100F137BC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		3D288AE613C198BD00F137BC /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
-		3D288AE713C198BD00F137BC /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
 		3D288AFB13C22FAF00F137BC /* MessageToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageToolbar.h; sourceTree = "<group>"; };
 		3D288AFC13C22FB000F137BC /* MessageToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageToolbar.m; sourceTree = "<group>"; };
 		3D90CD5313ED9A4100B328CA /* NSInvocation+ForwardedConstruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInvocation+ForwardedConstruction.h"; sourceTree = "<group>"; };
 		3D90CD5413ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInvocation+ForwardedConstruction.m"; sourceTree = "<group>"; };
+		3D90CD5613EDF3C000B328CA /* Channel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Channel.h; path = ../Channel.h; sourceTree = "<group>"; };
+		3D90CD5713EDF3C000B328CA /* Channel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Channel.m; path = ../Channel.m; sourceTree = "<group>"; };
+		3D90CD5913EDF3C100B328CA /* PartMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PartMessage.h; path = ../PartMessage.h; sourceTree = "<group>"; };
+		3D90CD5A13EDF3C100B328CA /* PartMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PartMessage.m; path = ../PartMessage.m; sourceTree = "<group>"; };
+		3D90CD5C13EDF3C100B328CA /* NickMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NickMessage.h; path = ../NickMessage.h; sourceTree = "<group>"; };
+		3D90CD5D13EDF3C100B328CA /* NickMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NickMessage.m; path = ../NickMessage.m; sourceTree = "<group>"; };
+		3D90CD5F13EDF3C200B328CA /* NickInUseMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NickInUseMessage.h; path = ../NickInUseMessage.h; sourceTree = "<group>"; };
+		3D90CD6013EDF3C200B328CA /* NickInUseMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NickInUseMessage.m; path = ../NickInUseMessage.m; sourceTree = "<group>"; };
+		3D90CD6213EDF3C200B328CA /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = User.h; path = ../User.h; sourceTree = "<group>"; };
+		3D90CD6313EDF3C200B328CA /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = User.m; path = ../User.m; sourceTree = "<group>"; };
+		3D90CD6513EDF3C300B328CA /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Message.h; path = ../Message.h; sourceTree = "<group>"; };
+		3D90CD6613EDF3C300B328CA /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Message.m; path = ../Message.m; sourceTree = "<group>"; };
+		3D90CD6813EDF3C300B328CA /* JoinMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JoinMessage.h; path = ../JoinMessage.h; sourceTree = "<group>"; };
+		3D90CD6913EDF3C300B328CA /* JoinMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JoinMessage.m; path = ../JoinMessage.m; sourceTree = "<group>"; };
+		3D90CD6B13EDF3C300B328CA /* UserMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserMessage.h; path = ../UserMessage.h; sourceTree = "<group>"; };
+		3D90CD6C13EDF3C400B328CA /* UserMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserMessage.m; path = ../UserMessage.m; sourceTree = "<group>"; };
+		3D90CD6E13EDF3C400B328CA /* Server.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Server.h; path = ../Server.h; sourceTree = "<group>"; };
+		3D90CD6F13EDF3C400B328CA /* Server.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Server.m; path = ../Server.m; sourceTree = "<group>"; };
+		3D90CD7113EDF3C400B328CA /* TopicMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TopicMessage.h; path = ../TopicMessage.h; sourceTree = "<group>"; };
+		3D90CD7213EDF3C400B328CA /* TopicMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TopicMessage.m; path = ../TopicMessage.m; sourceTree = "<group>"; };
+		3D90CD7413EDF3C400B328CA /* ServerMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServerMessage.h; path = ../ServerMessage.h; sourceTree = "<group>"; };
+		3D90CD7513EDF3C400B328CA /* ServerMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ServerMessage.m; path = ../ServerMessage.m; sourceTree = "<group>"; };
 		9826AB3E13D651640021B950 /* erkDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = erkDataModel.xcdatamodel; sourceTree = "<group>"; };
 		9826AB4113D658320021B950 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -268,7 +298,6 @@
 		3D28898D13C1653100F137BC = {
 			isa = PBXGroup;
 			children = (
-				9826AB4113D658320021B950 /* CoreData.framework */,
 				3D2889A213C1653100F137BC /* erk */,
 				3D2889BD13C1653100F137BC /* erkTests */,
 				3D28899B13C1653100F137BC /* Frameworks */,
@@ -291,6 +320,7 @@
 				3D2889D213C1656E00F137BC /* ApplicationServices.framework */,
 				3D2889D013C1656700F137BC /* QuartzCore.framework */,
 				3D28899C13C1653100F137BC /* Cocoa.framework */,
+				9826AB4113D658320021B950 /* CoreData.framework */,
 				3D28899E13C1653100F137BC /* Other Frameworks */,
 				3D288ADB13C18AA400F137BC /* CocoaAsyncSocket */,
 				3D288AC913C18A9D00F137BC /* Vendor */,
@@ -527,8 +557,13 @@
 		3D288AEA13C198C200F137BC /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				3D288AE613C198BD00F137BC /* Message.h */,
-				3D288AE713C198BD00F137BC /* Message.m */,
+				3D90CD6E13EDF3C400B328CA /* Server.h */,
+				3D90CD6F13EDF3C400B328CA /* Server.m */,
+				3D90CD6213EDF3C200B328CA /* User.h */,
+				3D90CD6313EDF3C200B328CA /* User.m */,
+				3D90CD5613EDF3C000B328CA /* Channel.h */,
+				3D90CD5713EDF3C000B328CA /* Channel.m */,
+				3DB177B013EDF5A400767025 /* Messages */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -540,6 +575,29 @@
 				3D90CD5413ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m */,
 			);
 			name = Utility;
+			sourceTree = "<group>";
+		};
+		3DB177B013EDF5A400767025 /* Messages */ = {
+			isa = PBXGroup;
+			children = (
+				3D90CD6513EDF3C300B328CA /* Message.h */,
+				3D90CD6613EDF3C300B328CA /* Message.m */,
+				3D90CD6B13EDF3C300B328CA /* UserMessage.h */,
+				3D90CD6C13EDF3C400B328CA /* UserMessage.m */,
+				3D90CD7413EDF3C400B328CA /* ServerMessage.h */,
+				3D90CD7513EDF3C400B328CA /* ServerMessage.m */,
+				3D90CD7113EDF3C400B328CA /* TopicMessage.h */,
+				3D90CD7213EDF3C400B328CA /* TopicMessage.m */,
+				3D90CD6813EDF3C300B328CA /* JoinMessage.h */,
+				3D90CD6913EDF3C300B328CA /* JoinMessage.m */,
+				3D90CD5F13EDF3C200B328CA /* NickInUseMessage.h */,
+				3D90CD6013EDF3C200B328CA /* NickInUseMessage.m */,
+				3D90CD5C13EDF3C100B328CA /* NickMessage.h */,
+				3D90CD5D13EDF3C100B328CA /* NickMessage.m */,
+				3D90CD5913EDF3C100B328CA /* PartMessage.h */,
+				3D90CD5A13EDF3C100B328CA /* PartMessage.m */,
+			);
+			name = Messages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -711,10 +769,20 @@
 				3D288AD813C18A9D00F137BC /* DDFileLogger.m in Sources */,
 				3D288AD913C18A9D00F137BC /* DDLog.m in Sources */,
 				3D288ADA13C18A9D00F137BC /* DDTTYLogger.m in Sources */,
-				3D288AE813C198BD00F137BC /* Message.m in Sources */,
 				3D288AFD13C22FB100F137BC /* MessageToolbar.m in Sources */,
 				9826AB3F13D651640021B950 /* erkDataModel.xcdatamodeld in Sources */,
 				3D90CD5513ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m in Sources */,
+				3D90CD5813EDF3C000B328CA /* Channel.m in Sources */,
+				3D90CD5B13EDF3C100B328CA /* PartMessage.m in Sources */,
+				3D90CD5E13EDF3C200B328CA /* NickMessage.m in Sources */,
+				3D90CD6113EDF3C200B328CA /* NickInUseMessage.m in Sources */,
+				3D90CD6413EDF3C300B328CA /* User.m in Sources */,
+				3D90CD6713EDF3C300B328CA /* Message.m in Sources */,
+				3D90CD6A13EDF3C300B328CA /* JoinMessage.m in Sources */,
+				3D90CD6D13EDF3C400B328CA /* UserMessage.m in Sources */,
+				3D90CD7013EDF3C400B328CA /* Server.m in Sources */,
+				3D90CD7313EDF3C400B328CA /* TopicMessage.m in Sources */,
+				3D90CD7613EDF3C500B328CA /* ServerMessage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
