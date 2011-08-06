@@ -53,6 +53,7 @@
 - (NSInteger)countMessages;
 - (Message *)messageForRow:(NSInteger)row;
 - (NSString *)getNick;
+- (NSString *)getCurrentChannel;
 - (NSArray *)highlightWords;
 
 - (NSMutableDictionary *)loadChannel:(NSString *)channel;

@@ -96,6 +96,19 @@
                 } else {
                     // said empty string to the empty string channel
                 }
+            } else if ([command caseInsensitiveCompare:kPart] == NSOrderedSame) {
+                if (count > 1) {
+                    // use specified channels to leave
+                    [self partWithChannels:[parts subarrayWithRange:(NSRange){1, count - 1}]];
+                } else {
+                    // no channels specified to leave
+                    NSString *currentChannel = [_delegate getCurrentChannel];
+                    if (currentChannel != nil) {
+                        [self partWithChannels:[NSArray arrayWithObject:currentChannel]];
+                    } else {
+                        // not in a channel, so nothing to leave
+                    }
+                }
             }
         } else {
             // was an empty string command
@@ -122,6 +135,10 @@
 
 - (void)topic:(NSString *)topic onChannel:(NSString *)channel {
     [self writeCommand:kTopic withValues:[NSArray arrayWithObjects:channel, topic, nil]];
+}
+
+- (void)partWithChannels:(NSArray *)channels {
+    [self writeCommand:kPart withValues:[NSArray arrayWithObject:[channels componentsJoinedByString:@","]]];
 }
 
 - (NSString *)getNick {
