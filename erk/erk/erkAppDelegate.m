@@ -212,6 +212,10 @@
     return [_server getNick];
 }
 
+- (NSString *)getCurrentChannel {
+    return _currentChannel;
+}
+
 - (NSArray *)highlightWords {
     return _highlightWords;
 }
