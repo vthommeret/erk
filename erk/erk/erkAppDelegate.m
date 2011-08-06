@@ -265,9 +265,7 @@
 }
 
 - (void)didPart:(NSString *)channel byUser:(NSString *)user {
-    if ([_serverData objectForKey:channel] == nil) { // I joined
-        // do something
-    } else {
+    if ([_serverData objectForKey:channel] != nil) {
         NSMutableDictionary *channelData = [_serverData objectForKey:channel];
         
         NSMutableArray *users = [channelData objectForKey:@"users"];
