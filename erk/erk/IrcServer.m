@@ -64,32 +64,32 @@
             NSString *command = [parts objectAtIndex:0];
             if ([command caseInsensitiveCompare:kJoin] == NSOrderedSame) {
                 if (count > 1) {
-                    [self join: [[parts subarrayWithRange:(NSRange){1, count - 1}] componentsJoinedByString: @" "]];
+                    [self join: [[parts subarrayWithRange:NSMakeRange(1, count-1)] componentsJoinedByString: @" "]];
                 } else {
                     // was a command to join the empty string
                 }
             } else if ([command caseInsensitiveCompare:kTopic] == NSOrderedSame) {
                 if (count > 1) {
-                    [self topic:[[parts subarrayWithRange:(NSRange){1, count - 1}] componentsJoinedByString: @" "] onChannel:channel];
+                    [self topic:[[parts subarrayWithRange:NSMakeRange(1, count-1)] componentsJoinedByString: @" "] onChannel:channel];
                 } else {
                     [self topic:nil onChannel:channel];
                 }
             } else if ([command caseInsensitiveCompare:kSay] == NSOrderedSame) {
                 if (count > 1) {
-                    [self privMsg:[[parts subarrayWithRange:(NSRange){1, count - 1}] componentsJoinedByString: @" "] toChannel:channel];
+                    [self privMsg:[[parts subarrayWithRange:NSMakeRange(1, count-1)] componentsJoinedByString: @" "] toChannel:channel];
                 } else {
                     // said empty string
                 }
             } else if ([command caseInsensitiveCompare:kNick] == NSOrderedSame) {
                 if (count > 1) {
-                    [self nick:[[parts subarrayWithRange:(NSRange){1, count - 1}] componentsJoinedByString: @" "]];
+                    [self nick:[[parts subarrayWithRange:NSMakeRange(1, count-1)] componentsJoinedByString: @" "]];
                 } else {
                     // changed nick to empty string
                 }
             } else if ([command caseInsensitiveCompare:kMsg] == NSOrderedSame) {
                 if (count > 1) {
                     if (count > 2) {
-                        [self privMsg:[[parts subarrayWithRange:(NSRange){2, count - 2}] componentsJoinedByString: @" "] toChannel:[parts objectAtIndex:1]];
+                        [self privMsg:[[parts subarrayWithRange:NSMakeRange(2, count-2)] componentsJoinedByString: @" "] toChannel:[parts objectAtIndex:1]];
                     } else {
                         // said empty string to person/channel
                     }
@@ -99,7 +99,7 @@
             } else if ([command caseInsensitiveCompare:kPart] == NSOrderedSame) {
                 if (count > 1) {
                     // use specified channels to leave
-                    [self partWithChannels:[parts subarrayWithRange:(NSRange){1, count - 1}]];
+                    [self partWithChannels:[parts subarrayWithRange:NSMakeRange(1, count-1)]];
                 } else {
                     // no channels specified to leave
                     NSString *currentChannel = [_delegate getCurrentChannel];
@@ -138,7 +138,7 @@
 }
 
 - (void)partWithChannels:(NSArray *)channels {
-    [self writeCommand:kPart withValues:[NSArray arrayWithObject:[channels componentsJoinedByString:@","]]];
+    [self writeCommand:kPart withValue:[channels componentsJoinedByString:@","]];
 }
 
 - (NSString *)getNick {
