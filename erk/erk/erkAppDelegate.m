@@ -30,21 +30,43 @@
 - (id)init {
     if ((self = [super init])) {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSManagedObjectContext *context = [self managedObjectContext];
         
-        NSString *host = [defaults stringForKey:@"host"];
-        NSInteger port = [defaults integerForKey:@"port"];
-        NSString *nick = [defaults stringForKey:@"nick"];
-        NSString *user = [defaults stringForKey:@"user"];
-        NSString *name = [defaults stringForKey:@"name"];
-        NSString *serverPass = [defaults stringForKey:@"serverPass"];
+        // This code populates Core Data with the server currently stored in your user defaults.
+        // Uncomment it, run the app, then recomment the code. Will be moved to a preference pane soon.
+
+//        NSManagedObject *server = [NSEntityDescription insertNewObjectForEntityForName:@"Server" inManagedObjectContext:context];
+//        
+//        [server setValue:[defaults stringForKey:@"host"] forKey:@"address"];
+//        [server setValue:[NSNumber numberWithLong:[defaults integerForKey:@"port"]] forKey:@"port"];
+//        [server setValue:[defaults stringForKey:@"nick"] forKey:@"nickname"];
+//        [server setValue:[defaults stringForKey:@"user"] forKey:@"loginName"];
+//        [server setValue:[defaults stringForKey:@"name"] forKey:@"realName"];
+//        [server setValue:[defaults stringForKey:@"serverPass"] forKey:@"serverPass"];
+//        
+//        NSError *error = nil;
+//        if (![context save:&error]) {
+//            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+//            abort();
+//        }
+        
         NSArray *autojoinChannels = [defaults arrayForKey:@"autojoinChannels"];
         NSArray *highlightWords = [defaults arrayForKey:@"highlightWords"];
         
-        if (host && port && nick && user && name && serverPass) {
-            _server = [[IrcServer alloc] initWithHost:host port:port
-                                                 nick:nick user:user
-                                                 name:name
-                                           serverPass:serverPass
+        NSFetchRequest *serverFetchRequest = [[NSFetchRequest alloc] init];
+        NSEntityDescription *serverDescription = [NSEntityDescription entityForName:@"Server" inManagedObjectContext:context];
+        
+        [serverFetchRequest setEntity:serverDescription];
+        NSArray *servers = [context executeFetchRequest:serverFetchRequest error:nil];
+        [serverFetchRequest release];
+        
+        for (NSManagedObject *server in servers) {
+            _server = [[IrcServer alloc] initWithHost:[server valueForKey:@"address"]
+                                                 port:[[server valueForKey:@"port"] intValue]
+                                                 nick:[server valueForKey:@"nickname"]
+                                                 user:[server valueForKey:@"loginName"]
+                                                 name:[server valueForKey:@"realName"]
+                                           serverPass:[server valueForKey:@"serverPass"]
                                              delegate:self];
             
             _autojoinChannels = [autojoinChannels retain];
@@ -53,9 +75,11 @@
             NSMutableDictionary *serverData = [[NSMutableDictionary alloc] initWithCapacity:10];
             self.serverData = serverData;
             [serverData release];
+            
+            _unreadAlerts = 0;
+            
+            break; // Only support one server for now.
         }
-        
-        _unreadAlerts = 0;
     }
     return self;
 }
@@ -227,9 +251,6 @@
 
 - (void)didConnect {
     [_server join:@"#vernon"];
-    for (NSString *channel in _autojoinChannels) {
-        [_server join:channel];
-    }
 }
 
 - (void)didJoin:(NSString *)channel byUser:(NSString *)user {
