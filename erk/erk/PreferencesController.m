@@ -7,7 +7,6 @@
 //
 
 #import "PreferencesController.h"
-#import "PreferencesView.h"
 
 @implementation PreferencesController
 
