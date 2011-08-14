@@ -8,8 +8,19 @@
 
 #import "Server.h"
 
+@interface Server (ServerAccessors)
+
+- (NSNumber *)primitivePort;
+- (void)setPrimitivePort:(NSNumber *)port;
+
+- (NSMutableSet *)primitiveChannels;
+- (void)setPrimitiveChannels:(NSMutableSet *)channels;
+
+@end
+
 @implementation Server
 
+@dynamic port;
 @dynamic address;
 @dynamic realName;
 @dynamic nickname;
@@ -31,14 +42,14 @@
 
 - (NSInteger)port {
     [self willAccessValueForKey:@"port"];
-    NSInteger port = _port;
+    NSInteger port = [[self primitivePort] integerValue];
     [self didAccessValueForKey:@"port"];
     return port;
 }
 
 - (void)setPort:(NSInteger)port {
     [self willChangeValueForKey:@"port"];
-    _port = port;
+    [self setPrimitivePort:[NSNumber numberWithInteger:port]];
     [self didChangeValueForKey:@"port"];
 }
 
@@ -57,15 +68,15 @@
     [changedObjects release];
 }
 
-- (void)addChannels:(NSSet *)value {    
+- (void)addChannels:(NSSet *)value {
     [self willChangeValueForKey:@"channels" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
-    [[self primitiveValueForKey:@"channels"] unionSet:value];
+    [[self primitiveChannels] unionSet:value];
     [self didChangeValueForKey:@"channels" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
 }
 
 - (void)removeChannels:(NSSet *)value {
     [self willChangeValueForKey:@"channels" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
-    [[self primitiveValueForKey:@"channels"] minusSet:value];
+    [[self primitiveChannels] minusSet:value];
     [self didChangeValueForKey:@"channels" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
 }
 

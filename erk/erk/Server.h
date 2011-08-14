@@ -9,9 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@interface Server : NSManagedObject {
-    NSInteger _port;
-}
+@interface Server : NSManagedObject
 
 @property (nonatomic, assign) NSInteger port;
 @property (nonatomic, retain) NSString *address;
