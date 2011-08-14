@@ -15,6 +15,7 @@
 #import "PreferencesController.h"
 
 #import "Message.h"
+#import "Server.h"
 
 #import "NSInvocation+ForwardedConstruction.h"
 
@@ -39,14 +40,14 @@
         // This code populates Core Data with the server currently stored in your user defaults.
         // Uncomment it, run the app, then recomment the code. Will be moved to a preference pane soon.
 
-//        NSManagedObject *server = [NSEntityDescription insertNewObjectForEntityForName:@"Server" inManagedObjectContext:context];
+//        Server *server = [Server insertServerInContext:context];
 //        
-//        [server setValue:[defaults stringForKey:@"host"] forKey:@"address"];
-//        [server setValue:[NSNumber numberWithLong:[defaults integerForKey:@"port"]] forKey:@"port"];
-//        [server setValue:[defaults stringForKey:@"nick"] forKey:@"nickname"];
-//        [server setValue:[defaults stringForKey:@"user"] forKey:@"loginName"];
-//        [server setValue:[defaults stringForKey:@"name"] forKey:@"realName"];
-//        [server setValue:[defaults stringForKey:@"serverPass"] forKey:@"serverPass"];
+//        server.address = [defaults stringForKey:@"host"];
+//        server.port = [defaults integerForKey:@"port"];
+//        server.nickname = [defaults stringForKey:@"nick"]; 
+//        server.loginName = [defaults stringForKey:@"user"];
+//        server.realName = [defaults stringForKey:@"name"];
+//        server.serverPass = [defaults stringForKey:@"serverPass"];
 //        
 //        NSError *error = nil;
 //        if (![context save:&error]) {
@@ -58,19 +59,19 @@
         NSArray *highlightWords = [defaults arrayForKey:@"highlightWords"];
         
         NSFetchRequest *serverFetchRequest = [[NSFetchRequest alloc] init];
-        NSEntityDescription *serverDescription = [NSEntityDescription entityForName:@"Server" inManagedObjectContext:context];
         
-        [serverFetchRequest setEntity:serverDescription];
+        [serverFetchRequest setEntity:[Server entityDescriptionInContext:context]];
         NSArray *servers = [context executeFetchRequest:serverFetchRequest error:nil];
+        
         [serverFetchRequest release];
         
-        for (NSManagedObject *server in servers) {
-            _server = [[IrcServer alloc] initWithHost:[server valueForKey:@"address"]
-                                                 port:[[server valueForKey:@"port"] intValue]
-                                                 nick:[server valueForKey:@"nickname"]
-                                                 user:[server valueForKey:@"loginName"]
-                                                 name:[server valueForKey:@"realName"]
-                                           serverPass:[server valueForKey:@"serverPass"]
+        for (Server *server in servers) {
+            _server = [[IrcServer alloc] initWithHost:server.address
+                                                 port:server.port
+                                                 nick:server.nickname
+                                                 user:server.loginName
+                                                 name:server.realName
+                                           serverPass:server.serverPass
                                              delegate:self];
             
             _autojoinChannels = [autojoinChannels retain];
