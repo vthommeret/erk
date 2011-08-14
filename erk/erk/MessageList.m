@@ -59,8 +59,6 @@
 
 - (TUITableViewCell *)tableView:(TUITableView *)tableView cellForRowAtIndexPath:(TUIFastIndexPath *)indexPath
 {
-    MainView *mainView = (MainView *)tableView.superview;
-    
 	MainTableViewCell *cell = reusableTableCellOfClass(tableView, MainTableViewCell);
     
     Message *message = [_appDelegate messageForRow:indexPath.row];
@@ -76,7 +74,7 @@
         
         attributedString = [TUIAttributedString stringWithString:messageBody];
         attributedString.color = [TUIColor blackColor];
-        attributedString.font = mainView.mediumFont;
+        attributedString.font = _appDelegate.mediumFont;
         
         NSString *currentNick = [_appDelegate getNick];
         
@@ -106,7 +104,7 @@
     } else {
         attributedString = [TUIAttributedString stringWithString:[message description]];
         attributedString.color = [TUIColor blackColor];
-        attributedString.font = mainView.mediumFont;
+        attributedString.font = _appDelegate.mediumFont;
     }
     
     cell.attributedString = attributedString;

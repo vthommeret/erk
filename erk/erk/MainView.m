@@ -25,15 +25,9 @@
 
 @synthesize messageField = _messageField;
 
-@synthesize mediumFont = _helvetica15;
-@synthesize mediumBoldFont = _helveticaBold15;
-
 - (id)initWithFrame:(CGRect)frame
 {
-	if ((self = [super initWithFrame:frame])) {
-        self.mediumFont = [TUIFont fontWithName:@"HelveticaNeue" size:15];
-		self.mediumBoldFont = [TUIFont fontWithName:@"HelveticaNeue-Bold" size:15];
-        
+	if ((self = [super initWithFrame:frame])) {        
 		self.backgroundColor = [TUIColor colorWithWhite:0.9 alpha:1.0];
 		
         // Add ChannelList table view
@@ -110,9 +104,6 @@
     [_messageToolbar release];
     
     [_messageField release];
-    
-    [_helvetica15 release];
-    [_helveticaBold15 release];
     
 	[super dealloc];
 }

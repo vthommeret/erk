@@ -12,6 +12,7 @@
 #import "ChannelList.h"
 #import "MessageList.h"
 #import "UserList.h"
+#import "PreferencesController.h"
 
 #import "Message.h"
 
@@ -22,6 +23,9 @@
 @synthesize mainView = _mainView;
 
 @synthesize serverData = _serverData;
+
+@synthesize mediumFont = _helvetica15;
+@synthesize mediumBoldFont = _helveticaBold15;
 
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
@@ -80,6 +84,11 @@
             
             break; // Only support one server for now.
         }
+        
+        // fonts
+        
+        self.mediumFont = [TUIFont fontWithName:@"HelveticaNeue" size:15];
+		self.mediumBoldFont = [TUIFont fontWithName:@"HelveticaNeue-Bold" size:15];
     }
     return self;
 }
@@ -88,12 +97,16 @@
 {
     [_window release];
     [_mainView release];
+    [_preferences release];
     
     [_server release];
     [_serverData release];
     [_autojoinChannels release];
     
     [_highlightWords release];
+    
+    [_helvetica15 release];
+    [_helveticaBold15 release];
     
     [_managedObjectContext release];
     [_managedObjectModel release];
@@ -126,6 +139,10 @@
     [_server connect];
     
     [_window makeKeyAndOrderFront:nil];
+    
+    // Preferences
+    
+    _preferences = [[PreferencesController alloc] init];
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)notification {
@@ -135,6 +152,14 @@
     
     [channelData setValue:[NSNumber numberWithInt:0] forKey:@"unreadAlerts"];
     [self.mainView.channelList reloadData];
+}
+
+- (IBAction)showPreferences:(id)sender {
+    [NSApp beginSheet:_preferences.panel modalForWindow:_window modalDelegate:self didEndSelector:@selector(didEndPreferences) contextInfo:nil];
+}
+
+- (void)didEndPreferences {
+    NSLog(@"done");
 }
 
 - (void)updateWindowTitle {

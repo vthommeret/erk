@@ -55,15 +55,13 @@
 
 - (TUITableViewCell *)tableView:(TUITableView *)tableView cellForRowAtIndexPath:(TUIFastIndexPath *)indexPath
 {
-    MainView *mainView = (MainView *)tableView.superview;
-    
 	MainTableViewCell *cell = reusableTableCellOfClass(tableView, MainTableViewCell);
 	
     NSString *user = [_appDelegate userForRow:indexPath.row];
     
 	TUIAttributedString *s = [TUIAttributedString stringWithString:user];
 	s.color = [TUIColor blackColor];
-	s.font = mainView.mediumFont;
+	s.font = _appDelegate.mediumFont;
 	cell.attributedString = s;
 	
 	return cell;

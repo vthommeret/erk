@@ -11,12 +11,13 @@
 #import "TUIKit.h"
 #import "IrcServer.h"
 
-@class MainView, Message;
+@class PreferencesController, MainView, Message;
 
 @interface erkAppDelegate : NSObject <NSApplicationDelegate, IrcServerDelegate>
 {
 	NSWindow *_window;
     MainView *_mainView;
+    PreferencesController *_preferences;
     
     IrcServer *_server;
     NSMutableDictionary *_serverData;
@@ -27,6 +28,9 @@
     
     int _unreadAlerts;
     
+    TUIFont *_helvetica15;
+    TUIFont *_helveticaBold15;
+    
     NSManagedObjectContext *_managedObjectContext;
     NSManagedObjectModel *_managedObjectModel;
     NSPersistentStoreCoordinator *_persistentStoreCoordinator;
@@ -36,9 +40,15 @@
 
 @property (nonatomic, retain) NSMutableDictionary *serverData;
 
+@property (nonatomic, retain) TUIFont *mediumFont;
+@property (nonatomic, retain) TUIFont *mediumBoldFont;
+
 @property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+
+- (IBAction)showPreferences:(id)sender;
+- (void)didEndPreferences;
 
 - (void)updateWindowTitle;
 

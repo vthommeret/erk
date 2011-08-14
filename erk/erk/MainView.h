@@ -21,9 +21,6 @@
     MessageToolbar *_messageToolbar;
     
     TUITextField *_messageField;
-    
-    TUIFont *_helvetica15;
-    TUIFont *_helveticaBold15;
 }
 
 @property (nonatomic, retain) ChannelList *channelList;
@@ -32,8 +29,5 @@
 @property (nonatomic, retain) MessageToolbar *messageToolbar;
 
 @property (nonatomic, retain) TUITextField *messageField;
-
-@property (nonatomic, retain) TUIFont *mediumFont;
-@property (nonatomic, retain) TUIFont *mediumBoldFont;
 
 @end

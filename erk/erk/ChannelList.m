@@ -61,7 +61,6 @@
 
 - (TUITableViewCell *)tableView:(TUITableView *)tableView cellForRowAtIndexPath:(TUIFastIndexPath *)indexPath
 {
-    MainView *mainView = (MainView *)tableView.superview;
     MainTableViewCell *cell = reusableTableCellOfClass(tableView, MainTableViewCell);
     
     NSString *channelName = [_appDelegate channelNameForRow:indexPath.row];
@@ -79,7 +78,7 @@
     }
     
     TUIAttributedString *attributedString = [TUIAttributedString stringWithString:channelText];
-    attributedString.font = mainView.mediumFont;
+    attributedString.font = _appDelegate.mediumFont;
     
     if (unreadAlerts > 0) {
         attributedString.color = [TUIColor purpleColor];
