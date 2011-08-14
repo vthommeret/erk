@@ -7,13 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "TUIKit.h"
 
 @interface PreferencesController : NSObject {
-    NSPanel *_panel;
-    TUIView *_view;
+    NSWindow *_window;
 }
 
-@property (nonatomic, retain) NSPanel *panel;
+@property (nonatomic, retain) IBOutlet NSWindow *window;
 
 @end

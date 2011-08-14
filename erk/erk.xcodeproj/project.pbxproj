@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3D12D16A13F7A4BD005C192A /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3D12D16913F7A4BD005C192A /* Preferences.xib */; };
 		3D28899D13C1653100F137BC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D28899C13C1653100F137BC /* Cocoa.framework */; };
 		3D2889A713C1653100F137BC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3D2889A513C1653100F137BC /* InfoPlist.strings */; };
 		3D2889AA13C1653100F137BC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D2889A913C1653100F137BC /* main.m */; };
@@ -35,7 +36,6 @@
 		3D288ADD13C18AF100F137BC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D288ADC13C18AF100F137BC /* Security.framework */; };
 		3D288AE813C198BD00F137BC /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288AE713C198BD00F137BC /* Message.m */; };
 		3D288AFD13C22FB100F137BC /* MessageToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288AFC13C22FB000F137BC /* MessageToolbar.m */; };
-		3D5C70A613F7618500242C8D /* PreferencesView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D5C70A513F7618500242C8D /* PreferencesView.m */; };
 		3D90CD5513ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD5413ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m */; };
 		3DBDFFB513F71414001985F2 /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DBDFFB413F71414001985F2 /* PreferencesController.m */; };
 		3DEB71F413F7751600AD93D3 /* ABActiveRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DEB718D13F7751600AD93D3 /* ABActiveRange.m */; };
@@ -107,6 +107,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3D12D16913F7A4BD005C192A /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		3D28899813C1653100F137BC /* erk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = erk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D28899C13C1653100F137BC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		3D28899F13C1653100F137BC /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -158,8 +159,6 @@
 		3D288AE713C198BD00F137BC /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
 		3D288AFB13C22FAF00F137BC /* MessageToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageToolbar.h; sourceTree = "<group>"; };
 		3D288AFC13C22FB000F137BC /* MessageToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageToolbar.m; sourceTree = "<group>"; };
-		3D5C70A413F7618500242C8D /* PreferencesView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesView.h; sourceTree = "<group>"; };
-		3D5C70A513F7618500242C8D /* PreferencesView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesView.m; sourceTree = "<group>"; };
 		3D90CD5313ED9A4100B328CA /* NSInvocation+ForwardedConstruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInvocation+ForwardedConstruction.h"; sourceTree = "<group>"; };
 		3D90CD5413ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInvocation+ForwardedConstruction.m"; sourceTree = "<group>"; };
 		3DBDFFB313F71414001985F2 /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesController.h; sourceTree = "<group>"; };
@@ -353,6 +352,7 @@
 				3D90CD5213ED99E000B328CA /* Utility */,
 				3D2889A313C1653100F137BC /* Supporting Files */,
 				3D2889B113C1653100F137BC /* MainMenu.xib */,
+				3D12D16913F7A4BD005C192A /* Preferences.xib */,
 				9826AB3D13D651640021B950 /* erkDataModel.xcdatamodeld */,
 			);
 			path = erk;
@@ -394,8 +394,18 @@
 		3D288A8813C16BBC00F137BC /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				3D5C70A913F761C900242C8D /* Main View */,
-				3D5C70A813F761B200242C8D /* Preferences */,
+				3D288A7513C166BD00F137BC /* MainView.h */,
+				3D288A7613C166BD00F137BC /* MainView.m */,
+				3D288AA213C16F7B00F137BC /* ChannelList.h */,
+				3D288AA313C16F7B00F137BC /* ChannelList.m */,
+				3D288ABB13C17BC900F137BC /* MessageList.h */,
+				3D288ABC13C17BC900F137BC /* MessageList.m */,
+				3D288AA613C1738400F137BC /* UserList.h */,
+				3D288AA713C1738400F137BC /* UserList.m */,
+				3D288A7913C166BD00F137BC /* MainTableViewCell.h */,
+				3D288A7A13C166BD00F137BC /* MainTableViewCell.m */,
+				3D288AFB13C22FAF00F137BC /* MessageToolbar.h */,
+				3D288AFC13C22FB000F137BC /* MessageToolbar.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -441,34 +451,6 @@
 				3D288AE713C198BD00F137BC /* Message.m */,
 			);
 			name = Models;
-			sourceTree = "<group>";
-		};
-		3D5C70A813F761B200242C8D /* Preferences */ = {
-			isa = PBXGroup;
-			children = (
-				3D5C70A413F7618500242C8D /* PreferencesView.h */,
-				3D5C70A513F7618500242C8D /* PreferencesView.m */,
-			);
-			name = Preferences;
-			sourceTree = "<group>";
-		};
-		3D5C70A913F761C900242C8D /* Main View */ = {
-			isa = PBXGroup;
-			children = (
-				3D288A7513C166BD00F137BC /* MainView.h */,
-				3D288A7613C166BD00F137BC /* MainView.m */,
-				3D288AA213C16F7B00F137BC /* ChannelList.h */,
-				3D288AA313C16F7B00F137BC /* ChannelList.m */,
-				3D288ABB13C17BC900F137BC /* MessageList.h */,
-				3D288ABC13C17BC900F137BC /* MessageList.m */,
-				3D288AA613C1738400F137BC /* UserList.h */,
-				3D288AA713C1738400F137BC /* UserList.m */,
-				3D288A7913C166BD00F137BC /* MainTableViewCell.h */,
-				3D288A7A13C166BD00F137BC /* MainTableViewCell.m */,
-				3D288AFB13C22FAF00F137BC /* MessageToolbar.h */,
-				3D288AFC13C22FB000F137BC /* MessageToolbar.m */,
-			);
-			name = "Main View";
 			sourceTree = "<group>";
 		};
 		3D90CD5213ED99E000B328CA /* Utility */ = {
@@ -690,6 +672,7 @@
 				3D2889AD13C1653100F137BC /* Credits.rtf in Resources */,
 				3D2889B313C1653100F137BC /* MainMenu.xib in Resources */,
 				3D288A7F13C166DA00F137BC /* clock.png in Resources */,
+				3D12D16A13F7A4BD005C192A /* Preferences.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -744,7 +727,6 @@
 				9826AB3F13D651640021B950 /* erkDataModel.xcdatamodeld in Sources */,
 				3D90CD5513ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m in Sources */,
 				3DBDFFB513F71414001985F2 /* PreferencesController.m in Sources */,
-				3D5C70A613F7618500242C8D /* PreferencesView.m in Sources */,
 				3DEB71F413F7751600AD93D3 /* ABActiveRange.m in Sources */,
 				3DEB71F513F7751600AD93D3 /* CoreText+Additions.m in Sources */,
 				3DEB71F613F7751600AD93D3 /* TUIAccessibility.m in Sources */,

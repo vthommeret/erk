@@ -48,7 +48,6 @@
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
 - (IBAction)showPreferences:(id)sender;
-- (void)didEndPreferences;
 
 - (void)updateWindowTitle;
 

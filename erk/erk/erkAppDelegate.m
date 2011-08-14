@@ -155,11 +155,9 @@
 }
 
 - (IBAction)showPreferences:(id)sender {
-    [NSApp beginSheet:_preferences.panel modalForWindow:_window modalDelegate:self didEndSelector:@selector(didEndPreferences) contextInfo:nil];
-}
-
-- (void)didEndPreferences {
-    NSLog(@"done");
+    NSWindow *window = _preferences.window;
+    [window makeKeyAndOrderFront:nil];
+    [window center];
 }
 
 - (void)updateWindowTitle {

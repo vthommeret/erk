@@ -11,30 +11,17 @@
 
 @implementation PreferencesController
 
-@synthesize panel = _panel;
+@synthesize window = _window;
 
 - (id)init {
     if ((self = [super init])) {
-        CGRect bounds = CGRectMake(0, 0, 500, 300);
-        
-        _panel = [[NSPanel alloc] initWithContentRect:bounds
-                                            styleMask:NSDocModalWindowMask
-                                              backing:NSBackingStoreBuffered
-                                                defer:NO];
-        
-        TUINSView *tuiContainer = [[TUINSView alloc] initWithFrame:bounds];
-        [_panel setContentView:tuiContainer];
-        [tuiContainer release];
-        
-        _view = [[PreferencesView alloc] initWithFrame:bounds];
-        tuiContainer.rootView = _view;
+        [NSBundle loadNibNamed:@"Preferences" owner:self];
     }
     return self;
 }
 
 - (void)dealloc {
-    [_panel release];
-    [_view release];
+    [_window release];
     [super dealloc];
 }
 
