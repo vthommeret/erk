@@ -8,7 +8,7 @@
 
 #import "Server.h"
 
-@interface Server (ServerAccessors)
+@interface Server (PrimitiveAccessors)
 
 - (NSNumber *)primitivePort;
 - (void)setPrimitivePort:(NSNumber *)port;
@@ -28,6 +28,8 @@
 @dynamic serverPass;
 @dynamic channels;
 
+// Convenience methods
+
 + (Server *)insertServerInContext:(NSManagedObjectContext *)context {
     Server *server = [NSEntityDescription insertNewObjectForEntityForName:@"Server" inManagedObjectContext:context];
     return server;
@@ -37,8 +39,7 @@
     return [NSEntityDescription entityForName:@"Server" inManagedObjectContext:context];
 }
 
-#pragma mark -
-#pragma mark Port
+// Port accessors
 
 - (NSInteger)port {
     [self willAccessValueForKey:@"port"];
@@ -53,8 +54,7 @@
     [self didChangeValueForKey:@"port"];
 }
 
-#pragma mark -
-#pragma mark Channel objects
+// Channel object methods
 
 - (void)addChannelsObject:(NSManagedObject *)value {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
