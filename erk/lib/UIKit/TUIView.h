@@ -16,6 +16,7 @@
 
 #import "TUIResponder.h"
 #import "TUIColor.h"
+#import "TUIAccessibility.h"
 
 enum {
 	TUIViewAutoresizingNone                 = 0,
@@ -100,6 +101,13 @@ extern CGRect(^TUIViewCenteredLayout)(TUIView*);
 		unsigned int delegateMouseExited:1;
 		unsigned int delegateWillDisplayLayer:1;
 	} _viewFlags;
+
+	BOOL isAccessibilityElement;
+	NSString *accessibilityLabel;
+	NSString *accessibilityHint;
+	NSString *accessibilityValue;
+	TUIAccessibilityTraits accessibilityTraits;
+	CGRect accessibilityFrame;
 }
 
 /**
@@ -158,6 +166,11 @@ extern CGRect(^TUIViewCenteredLayout)(TUIView*);
  Default is 1.5s
  */
 @property (nonatomic, assign) NSTimeInterval toolTipDelay;
+
+/**
+ Make this view the first responder. Returns NO if it fails.
+ */
+- (BOOL)makeFirstResponder;
 
 @end
 

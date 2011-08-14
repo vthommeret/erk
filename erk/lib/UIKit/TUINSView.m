@@ -131,6 +131,13 @@
 	}
 }
 
+- (void)viewDidMoveToWindow
+{
+	if(self.window != nil && rootView.layer.superlayer != [self layer]) {
+		[[self layer] addSublayer:rootView.layer];
+	}
+}
+
 - (TUIView *)viewForLocalPoint:(NSPoint)p
 {
 	return [rootView hitTest:p withEvent:nil];
@@ -244,6 +251,25 @@
 	[self _updateHoverViewWithEvent:event];
 }
 
+- (void)rightMouseDown:(NSEvent *)event
+{
+	[_trackingView release];
+	_trackingView = [[self viewForEvent:event] retain];
+	[_trackingView rightMouseDown:event];
+	[TUITooltipWindow endTooltip];
+	[super rightMouseDown:event]; // we need to send this up the responder chain so that -menuForEvent: will get called for two-finger taps
+}
+
+- (void)rightMouseUp:(NSEvent *)event
+{
+	TUIView *lastTrackingView = [[_trackingView retain] autorelease];
+	
+	[_trackingView release];
+	_trackingView = nil;
+	
+	[lastTrackingView rightMouseUp:event]; // after _trackingView set to nil, will call mouseUp:fromSubview:
+}
+
 - (void)scrollWheel:(NSEvent *)event
 {
 	[[self viewForEvent:event] scrollWheel:event];
@@ -286,15 +312,6 @@
 		deliveringEvent = NO;
 	}
 }
-
-#if 0
-- (id)accessibilityHitTest:(NSPoint)point
-{
-	NSPoint windowPoint = [[self window] convertScreenToBase:point];
-	NSPoint localPoint = [self convertPoint:windowPoint fromView:nil];
-	return [rootView accessibilityHitTest:localPoint];
-}
-#endif
 
 - (BOOL)performKeyEquivalent:(NSEvent *)event
 {

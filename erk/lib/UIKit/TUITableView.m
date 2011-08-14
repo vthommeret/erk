@@ -15,7 +15,11 @@
  */
 
 #import "TUITableView.h"
+#import "TUITableView+Cell.h"
 #import "TUINSView.h"
+
+// header views need to be above the cells at all times
+#define HEADER_Z_POSITION 1000 
 
 typedef struct {
 	CGFloat offset; // from beginning of section
@@ -130,6 +134,7 @@ typedef struct {
 		if(_tableView.dataSource != nil && [_tableView.dataSource respondsToSelector:@selector(tableView:headerViewForSection:)]){
 			_headerView = [[_tableView.dataSource tableView:_tableView headerViewForSection:sectionIndex] retain];
 			_headerView.autoresizingMask = TUIViewAutoresizingFlexibleWidth;
+			_headerView.layer.zPosition = HEADER_Z_POSITION;
 		}
 	}
 	return _headerView;
@@ -144,6 +149,7 @@ typedef struct {
 @implementation TUITableView
 
 @synthesize pullDownView=_pullDownView;
+@synthesize headerView=_headerView;
 
 - (id)initWithFrame:(CGRect)frame style:(TUITableViewStyle)style
 {
@@ -172,6 +178,10 @@ typedef struct {
 	[_indexPathShouldBeFirstResponder release];
 	[_keepVisibleIndexPathForReload release];
 	[_pullDownView release];
+	[_dragToReorderCell release];
+	[_currentDragToReorderIndexPath release];
+	[_previousDragToReorderIndexPath release];
+	[_headerView release];
 	[super dealloc];
 }
 
@@ -228,6 +238,18 @@ typedef struct {
 	return CGRectZero;
 }
 
+- (CGRect)rectForSection:(NSInteger)section
+{
+	if(section >= 0 && section < [_sectionInfo count]){
+		TUITableViewSection *s = [_sectionInfo objectAtIndex:section];
+		CGFloat offset = [s sectionOffset];
+		CGFloat height = [s sectionHeight];
+		CGFloat y = _contentHeight - offset - height;
+		return CGRectMake(0, y, self.bounds.size.width, height);
+	}
+	return CGRectZero;
+}
+
 - (CGRect)rectForRowAtIndexPath:(TUIFastIndexPath *)indexPath
 {
 	NSInteger section = indexPath.section;
@@ -253,7 +275,7 @@ typedef struct {
 	NSMutableArray *sections = [NSMutableArray arrayWithCapacity:numberOfSections];
 	
 	int s;
-	CGFloat offset = 0.0;
+	CGFloat offset = [_headerView bounds].size.height - self.contentInset.top;
 	for(s = 0; s < numberOfSections; ++s) {
 		TUITableViewSection *section = [[TUITableViewSection alloc] initWithNumberOfRows:[_dataSource tableView:self numberOfRowsInSection:s] sectionIndex:s tableView:self];
 		[section _setupRowHeights];
@@ -263,7 +285,7 @@ typedef struct {
 		[section release];
 	}
 	
-	_contentHeight = offset;
+	_contentHeight = offset - self.contentInset.bottom;
 	
 	return sections;
 }
@@ -300,6 +322,22 @@ typedef struct {
 		}
 	}
 	return nil;
+}
+
+/**
+ * @brief Obtain the header view for the specified section
+ * 
+ * If the section has no header, nil is returned.
+ * 
+ * @param section the section
+ * @return section header
+ */
+- (TUIView *)headerViewForSection:(NSInteger)section {
+  if(section >= 0 && section < [_sectionInfo count]){
+    return [(TUITableViewSection *)[_sectionInfo objectAtIndex:section] headerView];
+  }else{
+    return nil;
+  }
 }
 
 - (TUITableViewCell *)cellForRowAtIndexPath:(TUIFastIndexPath *)indexPath // returns nil if cell is not visible or index path is out of range
@@ -357,7 +395,7 @@ static NSInteger SortCells(TUITableViewCell *a, TUITableViewCell *b, void *ctx)
 	NSMutableIndexSet *indexes = [[NSMutableIndexSet alloc] init];
 	
 	for(int i = 0; i < [_sectionInfo count]; i++) {
-		if(CGRectIntersectsRect([self rectForHeaderOfSection:i], rect)){
+		if(CGRectIntersectsRect([self rectForSection:i], rect)){
 			[indexes addIndex:i];
 		}
 	}
@@ -404,6 +442,107 @@ static NSInteger SortCells(TUITableViewCell *a, TUITableViewCell *b, void *ctx)
 	return indexPaths;
 }
 
+/**
+ * @brief Obtain the index path of the row at the specified point
+ * 
+ * If the point is not valid or no row exists at that point, nil is
+ * returned.
+ * 
+ * @param point location in the table view
+ * @return index path of the row at @p point
+ */
+- (TUIFastIndexPath *)indexPathForRowAtPoint:(CGPoint)point {
+  
+	NSInteger sectionIndex = 0;
+  for(TUITableViewSection *section in _sectionInfo){
+    for(NSInteger row = 0; row < [section numberOfRows]; row++){
+      TUIFastIndexPath *indexPath = [TUIFastIndexPath indexPathForRow:row inSection:sectionIndex];
+      CGRect cellRect = [self rectForRowAtIndexPath:indexPath];
+      if(CGRectContainsPoint(cellRect, point)){
+        return indexPath;
+      }
+    }
+		++sectionIndex;
+  }
+	
+	return nil;
+}
+
+/**
+ * @brief Obtain the index of a section whose header is at the specified point
+ * 
+ * If the point is not valid or no header exists at that point, a negative value
+ * is returned.
+ * 
+ * @param point location in the table view
+ * @return index of the section whose header is at @p point
+ */
+- (NSInteger)indexOfSectionWithHeaderAtPoint:(CGPoint)point {
+  
+	NSInteger sectionIndex = 0;
+  for(TUITableViewSection *section in _sectionInfo){
+    TUIView *headerView;
+    if((headerView = section.headerView) != nil){
+      CGFloat offset = [section sectionOffset];
+      CGFloat height = [section headerHeight];
+      CGFloat y = _contentHeight - offset - height;
+      CGRect frame = CGRectMake(0, y, self.bounds.size.width, height);
+      if(CGRectContainsPoint(frame, point)){
+        return sectionIndex;
+      }
+    }
+    sectionIndex++;
+  }
+	
+	return -1;
+}
+
+/**
+ * @brief Enumerate index paths
+ * @see #enumerateIndexPathsFromIndexPath:toIndexPath:withOptions:usingBlock:
+ */
+- (void)enumerateIndexPathsUsingBlock:(void (^)(TUIFastIndexPath *indexPath, BOOL *stop))block {
+  [self enumerateIndexPathsFromIndexPath:nil toIndexPath:nil withOptions:0 usingBlock:block];
+}
+
+/**
+ * @brief Enumerate index paths
+ * @see #enumerateIndexPathsFromIndexPath:toIndexPath:withOptions:usingBlock:
+ */
+- (void)enumerateIndexPathsWithOptions:(NSEnumerationOptions)options usingBlock:(void (^)(TUIFastIndexPath *indexPath, BOOL *stop))block {
+  [self enumerateIndexPathsFromIndexPath:nil toIndexPath:nil withOptions:options usingBlock:block];
+}
+
+/**
+ * @brief Enumerate index paths
+ * 
+ * The provided block is repeatedly invoked with each valid index path between
+ * the specified bounds.  Both bounding index paths are inclusive.
+ * 
+ * @param fromIndexPath the index path to begin enumerating at or nil to begin at the first index path
+ * @param toIndexPath the index path to stop enumerating at or nil to stop at the last index path
+ * @param options enumeration options (not currently supported; pass 0)
+ * @param block the block to enumerate with
+ */
+- (void)enumerateIndexPathsFromIndexPath:(TUIFastIndexPath *)fromIndexPath toIndexPath:(TUIFastIndexPath *)toIndexPath withOptions:(NSEnumerationOptions)options usingBlock:(void (^)(TUIFastIndexPath *indexPath, BOOL *stop))block {
+  NSInteger sectionLowerBound = (fromIndexPath != nil) ? fromIndexPath.section : 0;
+  NSInteger sectionUpperBound = (toIndexPath != nil) ? toIndexPath.section : [self numberOfSections] - 1;
+  NSInteger rowLowerBound = (fromIndexPath != nil) ? fromIndexPath.row : 0;
+  NSInteger rowUpperBound = (toIndexPath != nil) ? toIndexPath.row : -1;
+  
+  NSInteger irow = rowLowerBound; // start at the lower bound row for the first iteration...
+  for(NSInteger i = sectionLowerBound; i < [self numberOfSections] && i <= sectionUpperBound /* inclusive */; i++){
+    NSInteger rowCount = [self numberOfRowsInSection:i];
+    for(NSInteger j = irow; j < rowCount && j <= ((rowUpperBound < 0 || i < sectionUpperBound) ? rowCount - 1 : rowUpperBound) /* inclusive */; j++){
+      BOOL stop = FALSE;
+      block([TUIFastIndexPath indexPathForRow:j inSection:i], &stop);
+      if(stop) return;
+    }
+    irow = 0; // ...then use zero for subsequent iterations
+  }
+  
+}
+
 - (TUIFastIndexPath *)_topVisibleIndexPath
 {
 	TUIFastIndexPath *topVisibleIndex = nil;
@@ -423,6 +562,13 @@ static NSInteger SortCells(TUITableViewCell *a, TUITableViewCell *b, void *ctx)
 {
 	_tableFlags.didFirstLayout = 1; // prevent the auto-scroll-to-top during the first layout
 	[super setContentOffset:p];
+	
+	// if we're currently dragging we need to update the drag operation since the content under
+	// the mouse has moved; we just call update again with the last mouse location
+  if([self __isDraggingCell]){
+    [self __updateDraggingCell:_dragToReorderCell offset:_currentDragToReorderMouseOffset location:_currentDragToReorderLocation];
+  }
+  
 }
 
 - (void)setPullDownView:(TUIView *)p
@@ -437,31 +583,48 @@ static NSInteger SortCells(TUITableViewCell *a, TUITableViewCell *b, void *ctx)
 	_pullDownView.hidden = YES;
 }
 
+- (void)setHeaderView:(TUIView *)h
+{
+	[_headerView removeFromSuperview];
+	
+	[h retain];
+	[_headerView release];
+	_headerView = h;
+	
+	[self addSubview:_headerView];
+	_headerView.hidden = YES;
+}
+
 - (BOOL)_preLayoutCells
 {
 	CGRect bounds = self.bounds;
 
 	if(!_sectionInfo || !CGSizeEqualToSize(bounds.size, _lastSize)) {
-		
 		// save scroll position
+		CGFloat previousOffset = 0.0f;
 		TUIFastIndexPath *savedIndexPath = nil;
 		CGFloat relativeOffset = 0.0;
-		if(_tableFlags.forceSaveScrollPosition || [self.nsView inLiveResize]) {
-			_tableFlags.forceSaveScrollPosition = 0;
-			NSArray *a = [INDEX_PATHS_FOR_VISIBLE_ROWS sortedArrayUsingSelector:@selector(compare:)];
-			if([a count]) {
-				savedIndexPath = [[a objectAtIndex:0] retain];
-				CGRect v = [self visibleRect];
-				CGRect r = [self rectForRowAtIndexPath:savedIndexPath];
-				relativeOffset = ((v.origin.y + v.size.height) - (r.origin.y + r.size.height));
-				relativeOffset += (_lastSize.height - bounds.size.height);
+		if(_tableFlags.maintainContentOffsetAfterReload) {
+			previousOffset = self.contentSize.height + self.contentOffset.y;
+		} else {
+			if(_tableFlags.forceSaveScrollPosition || [self.nsView inLiveResize]) {
+				_tableFlags.forceSaveScrollPosition = 0;
+				NSArray *a = [INDEX_PATHS_FOR_VISIBLE_ROWS sortedArrayUsingSelector:@selector(compare:)];
+				if([a count]) {
+					savedIndexPath = [[a objectAtIndex:0] retain];
+					CGRect v = [self visibleRect];
+					CGRect r = [self rectForRowAtIndexPath:savedIndexPath];
+					relativeOffset = ((v.origin.y + v.size.height) - (r.origin.y + r.size.height));
+					relativeOffset += (_lastSize.height - bounds.size.height);
+				}
+			} else if(_keepVisibleIndexPathForReload) {
+				savedIndexPath = [_keepVisibleIndexPathForReload retain];
+				relativeOffset = _relativeOffsetForReload;
+				[_keepVisibleIndexPathForReload release];
+				_keepVisibleIndexPathForReload = nil;
 			}
-		} else if(_keepVisibleIndexPathForReload) {
-			savedIndexPath = [_keepVisibleIndexPathForReload retain];
-			relativeOffset = _relativeOffsetForReload;
-			[_keepVisibleIndexPathForReload release];
-			_keepVisibleIndexPathForReload = nil;
 		}
+		
 		
 		[_sectionInfo release];
 		_sectionInfo = [[self _freshSectionInfo] retain]; // calculates new contentHeight here
@@ -475,16 +638,21 @@ static NSInteger SortCells(TUITableViewCell *a, TUITableViewCell *b, void *ctx)
 		}
 		
 		// restore scroll position
-		if(savedIndexPath) {
-			CGRect v = [self visibleRect];
-			CGRect r = [self rectForRowAtIndexPath:savedIndexPath];
-			r.origin.y -= (v.size.height - r.size.height);
-			r.size.height += (v.size.height - r.size.height);
-			
-			r.origin.y += relativeOffset;
-			
-			[self scrollRectToVisible:r animated:NO];
-			[savedIndexPath release];
+		if(_tableFlags.maintainContentOffsetAfterReload) {
+			CGFloat newOffset = previousOffset - self.contentSize.height;
+			self.contentOffset = CGPointMake(self.contentOffset.x, newOffset);
+		} else {
+			if(savedIndexPath) {
+				CGRect v = [self visibleRect];
+				CGRect r = [self rectForRowAtIndexPath:savedIndexPath];
+				r.origin.y -= (v.size.height - r.size.height);
+				r.size.height += (v.size.height - r.size.height);
+				
+				r.origin.y += relativeOffset;
+				
+				[self scrollRectToVisible:r animated:NO];
+				[savedIndexPath release];
+			}
 		}
 		
 		return YES; // needs visible cells to be redisplayed
@@ -498,29 +666,44 @@ static NSInteger SortCells(TUITableViewCell *a, TUITableViewCell *b, void *ctx)
  */
 - (void)_layoutSectionHeaders:(BOOL)visibleHeadersNeedRelayout
 {
-	if(visibleHeadersNeedRelayout) {
-		if(_visibleSectionHeaders != nil){
-			[_visibleSectionHeaders enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop) {
-				if(index < [_sectionInfo count]) {
-					TUITableViewSection *section = [_sectionInfo objectAtIndex:index];
-					if(section.headerView != nil) {
-						section.headerView.frame = [self rectForHeaderOfSection:index];
-						[section.headerView setNeedsLayout];
-					}
-				}
-			}];
-		}
-	}
-  
 	CGRect visible = [self visibleRect];
-	
 	NSIndexSet *oldIndexes = _visibleSectionHeaders;
-	NSIndexSet *newIndexes = [self indexesOfSectionHeadersInRect:visible];
+	NSIndexSet *newIndexes = [self indexesOfSectionsInRect:visible];
 	
 	NSMutableIndexSet *toRemove = [[oldIndexes mutableCopy] autorelease];
 	[toRemove removeIndexes:newIndexes];
 	NSMutableIndexSet *toAdd = [[newIndexes mutableCopy] autorelease];
 	[toAdd removeIndexes:oldIndexes];
+	
+	// update the placement of all visible headers
+	__block TUIView *pinnedHeader = nil;
+	[newIndexes enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop) {
+		if(index < [_sectionInfo count]) {
+			TUITableViewSection *section = [_sectionInfo objectAtIndex:index];
+			if(section.headerView != nil) {
+				CGRect headerFrame = [self rectForHeaderOfSection:index];
+
+				// check if this header needs to be pinned
+				if(CGRectGetMaxY(headerFrame) > CGRectGetMaxY(visible)) {
+					headerFrame.origin.y = CGRectGetMaxY(visible) - headerFrame.size.height;
+					pinnedHeader = section.headerView;
+				}
+				else if((pinnedHeader != nil) && (CGRectGetMaxY(headerFrame) > pinnedHeader.frame.origin.y)) {
+					// this header is intersecting with the pinned header, so we push the pinned header upwards.
+					CGRect pinnedHeaderFrame = pinnedHeader.frame;
+					pinnedHeaderFrame.origin.y = CGRectGetMaxY(headerFrame);
+					pinnedHeader.frame = pinnedHeaderFrame;
+				}
+				
+				section.headerView.frame = headerFrame;
+				[section.headerView setNeedsLayout];
+				
+				if (section.headerView.superview == nil)
+					[self addSubview:section.headerView];
+			}
+		}
+		[_visibleSectionHeaders addIndex:index];
+	}];
 	
 	// remove offscreen headers
 	[toRemove enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop) {
@@ -531,19 +714,6 @@ static NSInteger SortCells(TUITableViewCell *a, TUITableViewCell *b, void *ctx)
 			}
 		}
 		[_visibleSectionHeaders removeIndex:index];
-	}];
-	
-	// add new headers
-	[toAdd enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop) {
-		if(index < [_sectionInfo count]){
-			TUITableViewSection *section = [_sectionInfo objectAtIndex:index];
-			if(section.headerView != nil) {
-				section.headerView.frame = [self rectForHeaderOfSection:index];
-				[section.headerView setNeedsLayout];
-				[self addSubview:section.headerView];
-			}
-		}
-		[_visibleSectionHeaders addIndex:index];
 	}];
 }
 
@@ -579,9 +749,12 @@ static NSInteger SortCells(TUITableViewCell *a, TUITableViewCell *b, void *ctx)
 	// remove offscreen cells
 	for(TUIFastIndexPath *i in indexPathsToRemove) {
 		TUITableViewCell *cell = [self cellForRowAtIndexPath:i];
-		[self _enqueueReusableCell:cell];
-		[cell removeFromSuperview];
-		[_visibleItems removeObjectForKey:i];
+		// don't reuse the dragged cell
+		if(_dragToReorderCell == nil || ![cell isEqual:_dragToReorderCell]){
+      [self _enqueueReusableCell:cell];
+      [cell removeFromSuperview];
+      [_visibleItems removeObjectForKey:i];
+    }
 	}
 	
 	// add new cells
@@ -599,13 +772,43 @@ static NSInteger SortCells(TUITableViewCell *a, TUITableViewCell *b, void *ctx)
 			} else {
 				[cell setSelected:NO animated:NO];
 			}
+			if(_tableFlags.delegateTableViewWillDisplayCellForRowAtIndexPath) {
+				[_delegate tableView:self willDisplayCell:cell forRowAtIndexPath:i];
+			}
 			[self addSubview:cell];
+			
 			if([_indexPathShouldBeFirstResponder isEqual:i]) {
-				[self.nsWindow makeFirstResponderIfNotAlreadyInResponderChain:cell withFutureRequestToken:_futureMakeFirstResponderToken];
+			  // only make cells first responder if they accept it
+			  if([cell acceptsFirstResponder]){
+			    [self.nsWindow makeFirstResponderIfNotAlreadyInResponderChain:cell withFutureRequestToken:_futureMakeFirstResponderToken];
+			  }
 				[_indexPathShouldBeFirstResponder release];
 				_indexPathShouldBeFirstResponder = nil;
 			}
+			
 			[_visibleItems setObject:cell forKey:i];
+		}
+	}
+	
+  // if we have a dragged cell, make sure it's on top of the newly added cells
+  if([indexPathsToAdd count] > 0 && _dragToReorderCell != nil){
+    [[_dragToReorderCell superview] bringSubviewToFront:_dragToReorderCell];
+  }
+  
+	if(_headerView) {
+		CGSize s = self.contentSize;
+		CGRect headerViewRect = CGRectMake(0, s.height - _headerView.frame.size.height, visible.size.width, _headerView.frame.size.height);
+		if(CGRectIntersectsRect(headerViewRect, visible)) {
+			_headerView.frame = headerViewRect;
+			
+			if(_headerView.hidden) {
+				// show
+				_headerView.hidden = NO;
+			}
+		} else {
+			if(!_headerView.hidden) {
+				_headerView.hidden = YES;
+			}
 		}
 	}
 	
@@ -647,6 +850,12 @@ static NSInteger SortCells(TUITableViewCell *a, TUITableViewCell *b, void *ctx)
 
 - (void)reloadData
 {
+  
+  // notify our delegate we're about to reload the table
+  if(self.delegate != nil && [self.delegate respondsToSelector:@selector(tableViewWillReloadData:)]){
+    [self.delegate tableViewWillReloadData:self];
+  }
+  
 	// need to recycle all visible cells, have them be regenerated on layoutSubviews
 	// because the same cells might have different content
 	for(TUIFastIndexPath *i in _visibleItems) {
@@ -654,12 +863,35 @@ static NSInteger SortCells(TUITableViewCell *a, TUITableViewCell *b, void *ctx)
 		[self _enqueueReusableCell:cell];
 		[cell removeFromSuperview];
 	}
+	
+	// if we have a dragged cell, clear it
+	[_dragToReorderCell release];
+	_dragToReorderCell = nil;
+	
+	// clear visible cells
 	[_visibleItems removeAllObjects];
+	
+	// remove any visible headers, they should be re-added when the table is laid out
+	for(TUITableViewSection *section in _sectionInfo){
+	  TUIView *headerView;
+	  if((headerView = [section headerView]) != nil){
+	    [headerView removeFromSuperview];
+	  }
+	}
+	
+	// clear visible section headers
+	[_visibleSectionHeaders removeAllIndexes];
 	
 	[_sectionInfo release];
 	_sectionInfo = nil; // will be regenerated on next layout
 	
 	[self layoutSubviews];
+	
+  // notify our delegate the table view has been reloaded
+  if(self.delegate != nil && [self.delegate respondsToSelector:@selector(tableViewDidReloadData:)]){
+    [self.delegate tableViewDidReloadData:self];
+  }
+  
 }
 
 - (void)layoutSubviews
@@ -729,7 +961,8 @@ static NSInteger SortCells(TUITableViewCell *a, TUITableViewCell *b, void *ctx)
 - (void)_makeRowAtIndexPathFirstResponder:(TUIFastIndexPath *)indexPath
 {
 	TUITableViewCell *cell = [self cellForRowAtIndexPath:indexPath];
-	if(cell) {
+	// only cells that accept first responder should be made first responder
+	if(cell && [cell acceptsFirstResponder]) {
 		[self.nsWindow makeFirstResponderIfNotAlreadyInResponderChain:cell];
 	} else {
 		[_indexPathShouldBeFirstResponder release];
@@ -832,9 +1065,10 @@ static NSInteger SortCells(TUITableViewCell *a, TUITableViewCell *b, void *ctx)
 				}
 				newIndexPath = [TUIFastIndexPath indexPathForRow:row inSection:section];
 			}
-			
-			[self selectRowAtIndexPath:newIndexPath animated:self.animateSelectionChanges scrollPosition:TUITableViewScrollPositionToVisible];
-			
+			if(![_delegate respondsToSelector:@selector(tableView:shouldSelectRowAtIndexPath:forEvent:)] || [_delegate tableView:self shouldSelectRowAtIndexPath:newIndexPath forEvent:event]){
+				[self selectRowAtIndexPath:newIndexPath animated:self.animateSelectionChanges scrollPosition:TUITableViewScrollPositionToVisible];
+			}
+
 			return YES;
 		}
 	
@@ -862,13 +1096,25 @@ static NSInteger SortCells(TUITableViewCell *a, TUITableViewCell *b, void *ctx)
 				newIndexPath = [TUIFastIndexPath indexPathForRow:row inSection:section];
 			}
 			
-			[self selectRowAtIndexPath:newIndexPath animated:self.animateSelectionChanges scrollPosition:TUITableViewScrollPositionToVisible];
+			if(![_delegate respondsToSelector:@selector(tableView:shouldSelectRowAtIndexPath:forEvent:)] || [_delegate tableView:self shouldSelectRowAtIndexPath:newIndexPath forEvent:event]){
+				[self selectRowAtIndexPath:newIndexPath animated:self.animateSelectionChanges scrollPosition:TUITableViewScrollPositionToVisible];
+			}
 			
 			return YES;
 		}
 	}
 	
 	return [super performKeyAction:event];
+}
+
+- (BOOL)maintainContentOffsetAfterReload
+{
+	return _tableFlags.maintainContentOffsetAfterReload;
+}
+
+- (void)setMaintainContentOffsetAfterReload:(BOOL)newValue
+{
+	_tableFlags.maintainContentOffsetAfterReload = newValue;
 }
 
 @end
