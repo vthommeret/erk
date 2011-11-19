@@ -18,4 +18,8 @@
 
 - (void)show;
 
+- (IBAction)addServer:(id)sender;
+- (IBAction)removeServer:(id)sender;
+- (IBAction)help:(id)sender;
+
 @end

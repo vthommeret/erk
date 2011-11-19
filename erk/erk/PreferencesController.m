@@ -32,4 +32,16 @@
     [_window center];
 }
 
+- (IBAction)addServer:(id)sender {
+    NSLog(@"add server");
+}
+
+- (IBAction)removeServer:(id)sender {
+    NSLog(@"remove server");
+}
+
+- (IBAction)help:(id)sender {
+    NSLog(@"not implemented");
+}
+
 @end
