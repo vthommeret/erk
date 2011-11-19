@@ -11,6 +11,7 @@
 @implementation PreferencesController
 
 @synthesize window = _window;
+@synthesize address = _address;
 
 - (id)init {
     if ((self = [super init])) {
@@ -25,6 +26,8 @@
 }
 
 - (void)show {
+    [_window makeFirstResponder:_address];
+    
     [_window makeKeyAndOrderFront:nil];
     [_window center];
 }

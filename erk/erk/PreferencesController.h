@@ -10,9 +10,11 @@
 
 @interface PreferencesController : NSObject {
     NSWindow *_window;
+    NSTextField *_address;
 }
 
 @property (nonatomic, retain) IBOutlet NSWindow *window;
+@property (nonatomic, retain) IBOutlet NSTextField *address;
 
 - (void)show;
 
