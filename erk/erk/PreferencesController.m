@@ -24,4 +24,9 @@
     [super dealloc];
 }
 
+- (void)show {
+    [_window makeKeyAndOrderFront:nil];
+    [_window center];
+}
+
 @end

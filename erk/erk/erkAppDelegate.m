@@ -156,9 +156,7 @@
 }
 
 - (IBAction)showPreferences:(id)sender {
-    NSWindow *window = _preferences.window;
-    [window makeKeyAndOrderFront:nil];
-    [window center];
+    [_preferences show];
 }
 
 - (void)updateWindowTitle {

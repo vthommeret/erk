@@ -14,4 +14,6 @@
 
 @property (nonatomic, retain) IBOutlet NSWindow *window;
 
+- (void)show;
+
 @end
