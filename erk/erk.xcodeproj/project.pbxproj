@@ -656,6 +656,7 @@
 		3D28898F13C1653100F137BC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0420;
 				ORGANIZATIONNAME = "Allergic Studios";
 			};
 			buildConfigurationList = 3D28899213C1653100F137BC /* Build configuration list for PBXProject "erk" */;
