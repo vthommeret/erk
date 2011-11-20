@@ -22,7 +22,7 @@
     IrcServer *_server;
     NSMutableDictionary *_serverData;
     NSString *_currentChannel;
-    NSArray *_autojoinChannels;
+    NSMutableArray *_autojoinChannels;
     
     NSArray *_highlightWords;
     

@@ -47,9 +47,14 @@
 
 - (void)connect {
     [_serverSocket connectToHost:_host onPort:_port error:nil];
-    [self writeCommand:kPass withValue:_serverPass];
+    
+    if (_serverPass != nil) {
+        [self writeCommand:kPass withValue:_serverPass];
+    }
+    
     [self writeCommand:kNick withValue:_nick];
     [self writeCommand:kUser withValues:[NSArray arrayWithObjects:_user, kAny, kAny, _name, nil]];
+    
     [self readData];
 }
 

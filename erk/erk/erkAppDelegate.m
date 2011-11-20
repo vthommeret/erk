@@ -36,46 +36,7 @@
 
 - (id)init {
     if ((self = [super init])) {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSManagedObjectContext *context = [self managedObjectContext];
-        
-        // This code populates Core Data with the server currently stored in your user defaults.
-        // Uncomment it, run the app, then recomment the code. Will be moved to a preference pane soon.
-
-//        Server *server = [Server insertServerInContext:context];
-//        
-//        server.address = [defaults stringForKey:@"host"];
-//        server.port = [defaults integerForKey:@"port"];
-//        server.nickname = [defaults stringForKey:@"nick"]; 
-//        server.loginName = [defaults stringForKey:@"user"];
-//        server.realName = [defaults stringForKey:@"name"];
-//        server.serverPass = [defaults stringForKey:@"serverPass"];
-//        
-//        for (NSString *autojoinChannel in autojoinChannels) {
-//            Channel *channel = [Channel insertChannelInContext:context];
-//            
-//            channel.name = autojoinChannel;
-//            channel.autojoin = true;
-//            
-//            [server addChannel:channel];
-//        }
-//        
-//        for (NSString *highlightWord in highlightWords) {
-//            AlertWord *alertWord = [AlertWord insertAlertWordInContext:context];
-//            
-//            alertWord.word = highlightWord;
-//            
-//            [server addAlertWord:alertWord];
-//        }
-//        
-//        NSError *error = nil;
-//        if (![context save:&error]) {
-//            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-//            abort();
-//        }
-        
-        NSArray *autojoinChannels = [defaults arrayForKey:@"autojoinChannels"];
-        NSArray *highlightWords = [defaults arrayForKey:@"highlightWords"];
         
         NSFetchRequest *serverFetchRequest = [[NSFetchRequest alloc] init];
         
@@ -92,9 +53,16 @@
                                                  name:server.realName
                                            serverPass:server.serverPass
                                              delegate:self];
+
+            _autojoinChannels = [[NSMutableArray alloc] initWithCapacity:server.channels.count];
             
-            _autojoinChannels = [autojoinChannels retain];
-            _highlightWords = [highlightWords retain];
+            for (Channel *channel in server.channels) {
+                if (channel.autojoin) {
+                    [_autojoinChannels addObject:channel];
+                }
+            }
+            
+            _highlightWords = [server.alertWords allObjects];
             
             NSMutableDictionary *serverData = [[NSMutableDictionary alloc] initWithCapacity:10];
             self.serverData = serverData;
