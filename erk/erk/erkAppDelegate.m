@@ -513,7 +513,6 @@
             abort();
         }
     }
-    
     return _persistentStoreCoordinator;
 }
 
@@ -525,7 +524,6 @@
             [_managedObjectContext setPersistentStoreCoordinator:coordinator];
         }
     }
-    
     return _managedObjectContext;
 }
 

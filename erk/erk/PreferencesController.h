@@ -8,13 +8,21 @@
 
 #import <Foundation/Foundation.h>
 
-@interface PreferencesController : NSObject {
+@class PreferencesServerController;
+
+@interface PreferencesController : NSObject <NSTableViewDelegate> {
     NSWindow *_window;
+    NSTableView *_servers;
     NSTextField *_address;
+    
+    NSManagedObjectContext *_managedObjectContext;
 }
 
 @property (nonatomic, retain) IBOutlet NSWindow *window;
+@property (nonatomic, retain) IBOutlet NSTableView *servers;
 @property (nonatomic, retain) IBOutlet NSTextField *address;
+
+@property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 
 - (void)show;
 
