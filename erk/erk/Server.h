@@ -22,8 +22,8 @@
 + (Server *)insertServerInContext:(NSManagedObjectContext *)context;
 + (NSEntityDescription *)entityDescriptionInContext:(NSManagedObjectContext *)context;
 
-- (void)addChannelsObject:(NSManagedObject *)value;
-- (void)removeChannelsObject:(NSManagedObject *)value;
+- (void)addChannel:(NSManagedObject *)value;
+- (void)removeChannel:(NSManagedObject *)value;
 - (void)addChannels:(NSSet *)value;
 - (void)removeChannels:(NSSet *)value;
 

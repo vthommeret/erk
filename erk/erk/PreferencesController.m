@@ -44,8 +44,8 @@
 - (void)show {
     [_window makeFirstResponder:_address];
     
-    [_window makeKeyAndOrderFront:nil];
     [_window center];
+    [_window makeKeyAndOrderFront:nil];
 }
 
 - (IBAction)addServer:(id)sender {

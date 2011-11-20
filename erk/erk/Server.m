@@ -11,10 +11,10 @@
 @interface Server (PrimitiveAccessors)
 
 - (NSNumber *)primitivePort;
-- (void)setPrimitivePort:(NSNumber *)port;
+- (void)setPrimitivePort:(NSNumber *)value;
 
 - (NSMutableSet *)primitiveChannels;
-- (void)setPrimitiveChannels:(NSMutableSet *)channels;
+- (void)setPrimitiveChannels:(NSMutableSet *)value;
 
 @end
 
@@ -43,26 +43,26 @@
 
 - (NSInteger)port {
     [self willAccessValueForKey:@"port"];
-    NSInteger port = [[self primitivePort] integerValue];
+    NSInteger value = [[self primitivePort] integerValue];
     [self didAccessValueForKey:@"port"];
-    return port;
+    return value;
 }
 
-- (void)setPort:(NSInteger)port {
+- (void)setPort:(NSInteger)value {
     [self willChangeValueForKey:@"port"];
-    [self setPrimitivePort:[NSNumber numberWithInteger:port]];
+    [self setPrimitivePort:[NSNumber numberWithInteger:value]];
     [self didChangeValueForKey:@"port"];
 }
 
 // Channel object methods
 
-- (void)addChannelsObject:(NSManagedObject *)value {
+- (void)addChannel:(NSManagedObject *)value {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
     [self addChannels:changedObjects];
     [changedObjects release];
 }
 
-- (void)removeChannelsObject:(NSManagedObject *)value {
+- (void)removeChannel:(NSManagedObject *)value {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
     [self removeChannels:changedObjects];
     [changedObjects release];

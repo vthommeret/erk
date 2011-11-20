@@ -16,6 +16,7 @@
 
 #import "Message.h"
 #import "Server.h"
+#import "Channel.h"
 
 #import "NSInvocation+ForwardedConstruction.h"
 
@@ -49,11 +50,21 @@
 //        server.realName = [defaults stringForKey:@"name"];
 //        server.serverPass = [defaults stringForKey:@"serverPass"];
 //        
-//        NSError *error = nil;
-//        if (![context save:&error]) {
-//            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-//            abort();
+//        for (NSString *autojoinChannel in autojoinChannels) {
+//            Channel *channel = [Channel insertChannelInContext:context];
+//            
+//            channel.name = autojoinChannel;
+//            channel.autojoin = true;
+//            channel.server = server;
+//            
+//            [server addChannel:channel];
 //        }
+        
+        NSError *error = nil;
+        if (![context save:&error]) {
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            abort();
+        }
         
         NSArray *autojoinChannels = [defaults arrayForKey:@"autojoinChannels"];
         NSArray *highlightWords = [defaults arrayForKey:@"highlightWords"];

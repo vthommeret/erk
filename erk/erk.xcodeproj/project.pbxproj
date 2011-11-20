@@ -29,7 +29,6 @@
 		3D2889D313C1656E00F137BC /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D2889D213C1656E00F137BC /* ApplicationServices.framework */; };
 		3D288A7B13C166BD00F137BC /* MainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288A7613C166BD00F137BC /* MainView.m */; };
 		3D288A7D13C166BD00F137BC /* MainTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288A7A13C166BD00F137BC /* MainTableViewCell.m */; };
-		3D288A7F13C166DA00F137BC /* clock.png in Resources */ = {isa = PBXBuildFile; fileRef = 3D288A7E13C166DA00F137BC /* clock.png */; };
 		3D288AA413C16F7B00F137BC /* ChannelList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288AA313C16F7B00F137BC /* ChannelList.m */; };
 		3D288AA813C1738400F137BC /* UserList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288AA713C1738400F137BC /* UserList.m */; };
 		3D288ABD13C17BC900F137BC /* MessageList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288ABC13C17BC900F137BC /* MessageList.m */; };
@@ -94,6 +93,7 @@
 		3D36EA7C1478BF68001E5D30 /* TUIViewNSViewContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D36EA451478BF68001E5D30 /* TUIViewNSViewContainer.m */; };
 		3D90CD5513ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD5413ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m */; };
 		3DBDFFB513F71414001985F2 /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DBDFFB413F71414001985F2 /* PreferencesController.m */; };
+		3DF2360A1479012100D11716 /* Channel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DF236091479012100D11716 /* Channel.m */; };
 		9826AB3F13D651640021B950 /* erkDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9826AB3D13D651640021B950 /* erkDataModel.xcdatamodeld */; };
 		9826AB4213D658320021B950 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9826AB4113D658320021B950 /* CoreData.framework */; };
 /* End PBXBuildFile section */
@@ -149,7 +149,6 @@
 		3D288A7613C166BD00F137BC /* MainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainView.m; sourceTree = "<group>"; };
 		3D288A7913C166BD00F137BC /* MainTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainTableViewCell.h; sourceTree = "<group>"; };
 		3D288A7A13C166BD00F137BC /* MainTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainTableViewCell.m; sourceTree = "<group>"; };
-		3D288A7E13C166DA00F137BC /* clock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = clock.png; sourceTree = "<group>"; };
 		3D288AA213C16F7B00F137BC /* ChannelList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelList.h; sourceTree = "<group>"; };
 		3D288AA313C16F7B00F137BC /* ChannelList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChannelList.m; sourceTree = "<group>"; };
 		3D288AA613C1738400F137BC /* UserList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserList.h; sourceTree = "<group>"; };
@@ -273,6 +272,8 @@
 		3D90CD5413ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInvocation+ForwardedConstruction.m"; sourceTree = "<group>"; };
 		3DBDFFB313F71414001985F2 /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesController.h; sourceTree = "<group>"; };
 		3DBDFFB413F71414001985F2 /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesController.m; sourceTree = "<group>"; };
+		3DF236081479012100D11716 /* Channel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Channel.h; sourceTree = "<group>"; };
+		3DF236091479012100D11716 /* Channel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Channel.m; sourceTree = "<group>"; };
 		9826AB3E13D651640021B950 /* erkDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = erkDataModel.xcdatamodel; sourceTree = "<group>"; };
 		9826AB4113D658320021B950 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -334,6 +335,8 @@
 			children = (
 				3D12D16D13F85AF2005C192A /* Server.h */,
 				3D12D16E13F85AF2005C192A /* Server.m */,
+				3DF236081479012100D11716 /* Channel.h */,
+				3DF236091479012100D11716 /* Channel.m */,
 			);
 			name = "Core Data";
 			sourceTree = "<group>";
@@ -396,7 +399,6 @@
 		3D2889A313C1653100F137BC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				3D288A7E13C166DA00F137BC /* clock.png */,
 				3D2889A413C1653100F137BC /* erk-Info.plist */,
 				3D2889A513C1653100F137BC /* InfoPlist.strings */,
 				3D2889A813C1653100F137BC /* erk-Prefix.pch */,
@@ -677,7 +679,6 @@
 				3D2889A713C1653100F137BC /* InfoPlist.strings in Resources */,
 				3D2889AD13C1653100F137BC /* Credits.rtf in Resources */,
 				3D2889B313C1653100F137BC /* MainMenu.xib in Resources */,
-				3D288A7F13C166DA00F137BC /* clock.png in Resources */,
 				3D12D16A13F7A4BD005C192A /* Preferences.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -789,6 +790,7 @@
 				3D0F552F1478C3A200B9D36D /* DDFileLogger.m in Sources */,
 				3D0F55301478C3A200B9D36D /* DDLog.m in Sources */,
 				3D0F55311478C3A200B9D36D /* DDTTYLogger.m in Sources */,
+				3DF2360A1479012100D11716 /* Channel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
