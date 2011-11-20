@@ -268,6 +268,7 @@
 		3D36EA431478BF68001E5D30 /* TUIViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TUIViewController.m; sourceTree = "<group>"; };
 		3D36EA441478BF68001E5D30 /* TUIViewNSViewContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUIViewNSViewContainer.h; sourceTree = "<group>"; };
 		3D36EA451478BF68001E5D30 /* TUIViewNSViewContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TUIViewNSViewContainer.m; sourceTree = "<group>"; };
+		3D5A3A1B1478E48000FEDDDA /* erkDataModel 1.1.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "erkDataModel 1.1.xcdatamodel"; sourceTree = "<group>"; };
 		3D90CD5313ED9A4100B328CA /* NSInvocation+ForwardedConstruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInvocation+ForwardedConstruction.h"; sourceTree = "<group>"; };
 		3D90CD5413ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInvocation+ForwardedConstruction.m"; sourceTree = "<group>"; };
 		3DBDFFB313F71414001985F2 /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesController.h; sourceTree = "<group>"; };
@@ -989,9 +990,10 @@
 		9826AB3D13D651640021B950 /* erkDataModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				3D5A3A1B1478E48000FEDDDA /* erkDataModel 1.1.xcdatamodel */,
 				9826AB3E13D651640021B950 /* erkDataModel.xcdatamodel */,
 			);
-			currentVersion = 9826AB3E13D651640021B950 /* erkDataModel.xcdatamodel */;
+			currentVersion = 3D5A3A1B1478E48000FEDDDA /* erkDataModel 1.1.xcdatamodel */;
 			path = erkDataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
