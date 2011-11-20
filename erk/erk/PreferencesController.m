@@ -38,7 +38,8 @@
 }
 
 - (void)awakeFromNib {
-    [_servers setDelegate:self];
+    _window.delegate = self;
+    _servers.delegate = self;
 }
 
 - (void)show {
@@ -48,16 +49,19 @@
     [_window makeKeyAndOrderFront:nil];
 }
 
-- (IBAction)addServer:(id)sender {
-    NSLog(@"add server");
-}
-
-- (IBAction)removeServer:(id)sender {
-    NSLog(@"remove server");
-}
-
 - (IBAction)help:(id)sender {
     NSLog(@"not implemented");
+}
+
+#pragma mark -
+#pragma NSWindowDelegate methods
+
+- (void)windowWillClose:(NSNotification *)notification {
+    NSError *error = nil;
+    if (![_managedObjectContext save:&error]) {
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
 }
 
 #pragma mark -

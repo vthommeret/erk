@@ -10,7 +10,7 @@
 
 @class PreferencesServerController;
 
-@interface PreferencesController : NSObject <NSTableViewDelegate> {
+@interface PreferencesController : NSObject <NSWindowDelegate, NSTableViewDelegate> {
     NSWindow *_window;
     NSTableView *_servers;
     NSTextField *_address;
@@ -26,8 +26,6 @@
 
 - (void)show;
 
-- (IBAction)addServer:(id)sender;
-- (IBAction)removeServer:(id)sender;
 - (IBAction)help:(id)sender;
 
 @end

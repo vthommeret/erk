@@ -604,10 +604,18 @@
 		3DBDFFB113F713F4001985F2 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3DF2360F1479118300D11716 /* Preferences */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		3DF2360F1479118300D11716 /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
 				3DBDFFB313F71414001985F2 /* PreferencesController.h */,
 				3DBDFFB413F71414001985F2 /* PreferencesController.m */,
 			);
-			name = Controllers;
+			name = Preferences;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
