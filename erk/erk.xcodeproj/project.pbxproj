@@ -94,6 +94,7 @@
 		3D90CD5513ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D90CD5413ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m */; };
 		3DBDFFB513F71414001985F2 /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DBDFFB413F71414001985F2 /* PreferencesController.m */; };
 		3DF2360A1479012100D11716 /* Channel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DF236091479012100D11716 /* Channel.m */; };
+		3DF2360E1479086200D11716 /* AlertWord.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DF2360D1479086200D11716 /* AlertWord.m */; };
 		9826AB3F13D651640021B950 /* erkDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9826AB3D13D651640021B950 /* erkDataModel.xcdatamodeld */; };
 		9826AB4213D658320021B950 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9826AB4113D658320021B950 /* CoreData.framework */; };
 /* End PBXBuildFile section */
@@ -274,6 +275,8 @@
 		3DBDFFB413F71414001985F2 /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesController.m; sourceTree = "<group>"; };
 		3DF236081479012100D11716 /* Channel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Channel.h; sourceTree = "<group>"; };
 		3DF236091479012100D11716 /* Channel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Channel.m; sourceTree = "<group>"; };
+		3DF2360C1479086200D11716 /* AlertWord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertWord.h; sourceTree = "<group>"; };
+		3DF2360D1479086200D11716 /* AlertWord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertWord.m; sourceTree = "<group>"; };
 		9826AB3E13D651640021B950 /* erkDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = erkDataModel.xcdatamodel; sourceTree = "<group>"; };
 		9826AB4113D658320021B950 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -337,6 +340,8 @@
 				3D12D16E13F85AF2005C192A /* Server.m */,
 				3DF236081479012100D11716 /* Channel.h */,
 				3DF236091479012100D11716 /* Channel.m */,
+				3DF2360C1479086200D11716 /* AlertWord.h */,
+				3DF2360D1479086200D11716 /* AlertWord.m */,
 			);
 			name = "Core Data";
 			sourceTree = "<group>";
@@ -791,6 +796,7 @@
 				3D0F55301478C3A200B9D36D /* DDLog.m in Sources */,
 				3D0F55311478C3A200B9D36D /* DDTTYLogger.m in Sources */,
 				3DF2360A1479012100D11716 /* Channel.m in Sources */,
+				3DF2360E1479086200D11716 /* AlertWord.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

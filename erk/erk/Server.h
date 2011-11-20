@@ -18,6 +18,7 @@
 @property (nonatomic, retain) NSString *loginName;
 @property (nonatomic, retain) NSString *serverPass;
 @property (nonatomic, retain) NSSet *channels;
+@property (nonatomic, retain) NSSet *alertWords;
 
 + (Server *)insertServerInContext:(NSManagedObjectContext *)context;
 + (NSEntityDescription *)entityDescriptionInContext:(NSManagedObjectContext *)context;
@@ -26,5 +27,10 @@
 - (void)removeChannel:(NSManagedObject *)value;
 - (void)addChannels:(NSSet *)value;
 - (void)removeChannels:(NSSet *)value;
+
+- (void)addAlertWord:(NSManagedObject *)value;
+- (void)removeAlertWord:(NSManagedObject *)value;
+- (void)addAlertWords:(NSSet *)value;
+- (void)removeAlertWords:(NSSet *)value;
 
 @end

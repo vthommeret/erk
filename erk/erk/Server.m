@@ -14,7 +14,8 @@
 - (void)setPrimitivePort:(NSNumber *)value;
 
 - (NSMutableSet *)primitiveChannels;
-- (void)setPrimitiveChannels:(NSMutableSet *)value;
+
+- (NSMutableSet *)primitiveAlertWords;
 
 @end
 
@@ -27,6 +28,7 @@
 @dynamic loginName;
 @dynamic serverPass;
 @dynamic channels;
+@dynamic alertWords;
 
 // Convenience methods
 
@@ -78,6 +80,32 @@
     [self willChangeValueForKey:@"channels" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
     [[self primitiveChannels] minusSet:value];
     [self didChangeValueForKey:@"channels" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
+}
+
+// AlertWord object methods
+
+- (void)addAlertWord:(NSManagedObject *)value {
+    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
+    [self addAlertWords:changedObjects];
+    [changedObjects release];
+}
+
+- (void)removeAlertWord:(NSManagedObject *)value {
+    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
+    [self removeAlertWords:changedObjects];
+    [changedObjects release];
+}
+
+- (void)addAlertWords:(NSSet *)value {
+    [self willChangeValueForKey:@"alertWords" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
+    [[self primitiveAlertWords] unionSet:value];
+    [self didChangeValueForKey:@"alertWords" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
+}
+
+- (void)removeAlertWords:(NSSet *)value {
+    [self willChangeValueForKey:@"alertWords" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
+    [[self primitiveAlertWords] minusSet:value];
+    [self didChangeValueForKey:@"alertWords" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
 }
 
 @end

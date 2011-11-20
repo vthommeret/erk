@@ -17,6 +17,7 @@
 #import "Message.h"
 #import "Server.h"
 #import "Channel.h"
+#import "AlertWord.h"
 
 #import "NSInvocation+ForwardedConstruction.h"
 
@@ -55,16 +56,23 @@
 //            
 //            channel.name = autojoinChannel;
 //            channel.autojoin = true;
-//            channel.server = server;
 //            
 //            [server addChannel:channel];
 //        }
-        
-        NSError *error = nil;
-        if (![context save:&error]) {
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
+//        
+//        for (NSString *highlightWord in highlightWords) {
+//            AlertWord *alertWord = [AlertWord insertAlertWordInContext:context];
+//            
+//            alertWord.word = highlightWord;
+//            
+//            [server addAlertWord:alertWord];
+//        }
+//        
+//        NSError *error = nil;
+//        if (![context save:&error]) {
+//            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+//            abort();
+//        }
         
         NSArray *autojoinChannels = [defaults arrayForKey:@"autojoinChannels"];
         NSArray *highlightWords = [defaults arrayForKey:@"highlightWords"];
