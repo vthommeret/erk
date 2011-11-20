@@ -61,7 +61,7 @@
 - (NSString *)userForRow:(NSInteger)row;
 - (NSInteger)countMessages;
 - (Message *)messageForRow:(NSInteger)row;
-- (NSString *)getNick;
+- (NSString *)nick;
 - (NSString *)getCurrentChannel;
 - (NSArray *)highlightWords;
 

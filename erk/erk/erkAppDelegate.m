@@ -20,6 +20,7 @@
 #import "AlertWord.h"
 
 #import "NSInvocation+ForwardedConstruction.h"
+#import "NSData+Base64.h"
 
 @implementation erkAppDelegate
 
@@ -48,10 +49,11 @@
         for (Server *server in servers) {
             _server = [[IrcServer alloc] initWithHost:server.address
                                                  port:server.port
+                                           serverPass:server.serverPass
                                                  nick:server.nickname
                                                  user:server.loginName
                                                  name:server.realName
-                                           serverPass:server.serverPass
+                                             userPass:server.userPass
                                              delegate:self];
 
             _autojoinChannels = [[NSMutableArray alloc] initWithCapacity:server.channels.count];
@@ -208,7 +210,7 @@
 
 - (void)sortUsers {
     if (_currentChannel != nil) {
-        NSString *currentNick = [self getNick];
+        NSString *currentNick = [self nick];
         NSMutableDictionary *channelData = [_serverData objectForKey:_currentChannel];
         
         NSMutableArray *users = [channelData objectForKey:@"users"];
@@ -241,8 +243,8 @@
 }
 
 // TODO: per Objective-C convention "get" should only be used for getting things into a pointer.
-- (NSString *)getNick {
-    return [_server getNick];
+- (NSString *)nick {
+    return [_server nick];
 }
 
 - (NSString *)getCurrentChannel {
@@ -316,7 +318,7 @@
 
 - (void)didSay:(NSString *)text to:(NSString *)recipient fromUser:(NSString *)sender {
     NSString *channel;
-    NSString *currentNick = [self getNick];
+    NSString *currentNick = [self nick];
     
     if ([recipient isEqual:currentNick]) { // private message
         channel = sender;
@@ -346,7 +348,7 @@
     
     bool appIsInactive = (![NSApp isActive]);
     bool channelIsInactive = (![channel isEqualToString:_currentChannel]);
-    bool shouldAlert = ([text rangeOfString:[self getNick] options:NSCaseInsensitiveSearch].location != NSNotFound);
+    bool shouldAlert = ([text rangeOfString:[self nick] options:NSCaseInsensitiveSearch].location != NSNotFound);
     
     if (!shouldAlert) {
         for (NSString *highlightWord in _highlightWords) {
@@ -404,7 +406,7 @@
         NSMutableArray *users = [channel objectForKey:@"users"];
 
         [users removeObject:user];
-        if ([nick isEqual:[_server getNick]]) {
+        if ([nick isEqual:[_server nick]]) {
             [users insertObject:nick atIndex:0];
         } else {
             [users addObject:nick];            
@@ -428,6 +430,50 @@
         [message release];
         
         [self.mainView.messageList reloadData];
+    }
+}
+
+/**
+ * See http://www.leeh.co.uk/draft-mitchell-irc-capabilities-02.html for the CAP command spec.
+ */
+- (void)didCapWithSubcommand:(NSString *)subcommand capabilities:(NSArray *)capabilities {
+    if ([capabilities indexOfObject:@"sasl"] != NSNotFound) {
+        if ([subcommand isEqualToString:@"LS"]) {
+            [_server requestCapability:@"sasl"];
+        } else if ([subcommand isEqualToString:@"ACK"]) {
+            [_server authenticate:@"PLAIN"];
+        } else {
+            [_server cancelCapability];
+        }
+    }
+}
+
+/**
+ * Encryption bits lifted from http://colloquy.info/project/changeset/5259
+ */
+- (void)didAuthenticate:(NSString *)type {
+    if ([type isEqualToString:@"+"]) {
+        NSData *nicknameData = [[self nick] dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]; 
+        
+        NSMutableData *authenticateData = [nicknameData mutableCopy]; 
+        [authenticateData appendBytes:"\0" length:1]; 
+        [authenticateData appendData:nicknameData]; 
+        [authenticateData appendBytes:"\0" length:1]; 
+        [authenticateData appendData:[[_server userPass] dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]]; 
+        
+        NSString *authString = [authenticateData base64EncodingWithLineLength:400];
+        NSArray *authStringParts = [authString componentsSeparatedByString:@"\n"];
+        
+        for (NSString *authStringPart in authStringParts) {
+            [_server authenticate:authStringPart];
+        }
+        
+        // If empty or the last string was exactly 400 bytes we need to send an empty AUTHENTICATE to indicate we're done.
+        if( !authStringParts.count || [[authStringParts lastObject] length] == 400 ) {
+            [_server authenticate:@"+"];
+        }
+    } else {
+        [_server cancelCapability];
     }
 }
 

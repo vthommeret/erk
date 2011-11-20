@@ -76,7 +76,7 @@
         attributedString.color = [TUIColor blackColor];
         attributedString.font = _appDelegate.mediumFont;
         
-        NSString *currentNick = [_appDelegate getNick];
+        NSString *currentNick = [_appDelegate nick];
         
         if (userMessage.user != currentNick) {
             NSUInteger start = [prefix length];

@@ -18,16 +18,19 @@
 #pragma mark -
 #pragma mark Public methods
 
-- (id)initWithHost:(NSString *)host port:(NSInteger)port nick:(NSString *)nick user:(NSString *)user
-              name:(NSString *)name serverPass:(NSString *)serverPass
+- (id)initWithHost:(NSString *)host port:(NSInteger)port serverPass:(NSString *)serverPass
+              nick:(NSString *)nick user:(NSString *)user name:(NSString *)name
+          userPass:(NSString *)userPass
           delegate:(id<IrcServerDelegate>)delegate {
+    
     if ((self = [super init])) {
         _host = [host copy];
         _port = port;
+        _serverPass = [serverPass copy];
         _nick = [nick copy];
         _user = [user copy];
         _name = [name copy];
-        _serverPass = [serverPass copy];
+        _userPass = [userPass copy];
         _delegate = delegate;
         _socketQueue = dispatch_queue_create("SocketQueue", NULL);
         _serverSocket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:_socketQueue];
@@ -39,14 +42,20 @@
 - (void)dealloc {
     [_host release];
     [_nick release];
-    [_user release];
     [_serverPass release];
+    [_nick release];
+    [_user release];
+    [_name release];
+    [_userPass release];
     [_serverSocket release];
     [super dealloc];
 }
 
 - (void)connect {
     [_serverSocket connectToHost:_host onPort:_port error:nil];
+    
+    // Tell me what you support.
+    [self writeCommand:kCap withValue:@"LS"];
     
     if (_serverPass != nil) {
         [self writeCommand:kPass withValue:_serverPass];
@@ -146,8 +155,24 @@
     [self writeCommand:kPart withValue:[channels componentsJoinedByString:@","]];
 }
 
-- (NSString *)getNick {
+- (void)requestCapability:(NSString *)capability {
+    [self writeCommand:kCap withValues:[NSArray arrayWithObjects:@"REQ", capability, nil]];
+}
+
+- (void)cancelCapability {
+    [self writeCommand:kCap withValue:@"END"];
+}
+
+- (void)authenticate:(NSString *)data {
+    [self writeCommand:kAuthenticate withValue:data];
+}
+
+- (NSString *)nick {
     return _nick;
+}
+
+- (NSString *)userPass {
+    return _userPass;
 }
 
 #pragma mark -
@@ -357,6 +382,28 @@
             if ([_delegate respondsToSelector:@selector(didNickInUse:)]) {
                 [[NSInvocation invokeOnMainThreadWithTarget:_delegate]
                     didNickInUse:[NSString stringWithString:inUseNick]];
+            }
+        }
+        
+        else if ([command isEqualToString:kCap]) {
+            if ([paramsArray count] >= 3) {
+                NSString *subcommand = [paramsArray objectAtIndex:1];
+                NSArray *capabilities = [[paramsArray objectAtIndex:2] componentsSeparatedByString:@" "];
+                
+                if ([_delegate respondsToSelector:@selector(didCapWithSubcommand:capabilities:)]) {
+                    [[NSInvocation invokeOnMainThreadWithTarget:_delegate]
+                     didCapWithSubcommand:[NSString stringWithString:subcommand] capabilities:[NSArray arrayWithArray:capabilities]];
+                }
+            }
+        }
+        
+        else if ([command isEqualToString:kAuthenticate]) {
+            if ([paramsArray count] >= 1) {
+                NSString *type = [paramsArray objectAtIndex:0];
+                
+                if ([_delegate respondsToSelector:@selector(didAuthenticate:)]) {
+                    [[NSInvocation invokeOnMainThreadWithTarget:_delegate] didAuthenticate:[NSString stringWithString:type]];
+                }
             }
         }
         

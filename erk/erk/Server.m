@@ -23,10 +23,11 @@
 
 @dynamic port;
 @dynamic address;
+@dynamic serverPass;
 @dynamic realName;
 @dynamic nickname;
 @dynamic loginName;
-@dynamic serverPass;
+@dynamic userPass;
 @dynamic channels;
 @dynamic alertWords;
 

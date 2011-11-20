@@ -13,10 +13,11 @@
 
 @property (nonatomic, assign) NSInteger port;
 @property (nonatomic, retain) NSString *address;
+@property (nonatomic, retain) NSString *serverPass;
 @property (nonatomic, retain) NSString *realName;
 @property (nonatomic, retain) NSString *nickname;
 @property (nonatomic, retain) NSString *loginName;
-@property (nonatomic, retain) NSString *serverPass;
+@property (nonatomic, retain) NSString *userPass;
 @property (nonatomic, retain) NSSet *channels;
 @property (nonatomic, retain) NSSet *alertWords;
 
