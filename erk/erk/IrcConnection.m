@@ -1,16 +1,16 @@
 //
-//  IrcServer.m
+//  IrcConnection.m
 //  erk
 //
 //  Created by Vernon Thommeret on 1/16/11.
 //  Copyright 2011 Vernon Thommeret. All rights reserved.
 //
 
-#import "IrcServer.h"
+#import "IrcConnection.h"
 #import "GCDAsyncSocket.h"
 #import "NSInvocation+ForwardedConstruction.h"
 
-@implementation IrcServer
+@implementation IrcConnection
 
 @synthesize connected = _connected;
 @synthesize nick = _nick;
@@ -21,7 +21,7 @@
 - (id)initWithHost:(NSString *)host port:(NSInteger)port serverPass:(NSString *)serverPass
               nick:(NSString *)nick user:(NSString *)user name:(NSString *)name
           userPass:(NSString *)userPass
-          delegate:(id<IrcServerDelegate>)delegate {
+          delegate:(id<IrcConnectionDelegate>)delegate {
     
     if ((self = [super init])) {
         _host = [host copy];
@@ -55,7 +55,7 @@
     [_serverSocket connectToHost:_host onPort:_port error:nil];
     
     // Tell me what you support.
-    [self writeCommand:kCap withValue:@"LS"];
+//    [self writeCommand:kCap withValue:@"LS"];
     
     if (_serverPass != nil) {
         [self writeCommand:kPass withValue:_serverPass];

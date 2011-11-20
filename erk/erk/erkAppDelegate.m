@@ -8,13 +8,13 @@
 
 #import "erkAppDelegate.h"
 
-#import "MainView.h"
+#import "ServerController.h"
+
 #import "ChannelList.h"
 #import "MessageList.h"
 #import "UserList.h"
 #import "PreferencesController.h"
 
-#import "Message.h"
 #import "Server.h"
 #import "Channel.h"
 #import "AlertWord.h"
@@ -46,29 +46,15 @@
         
         [serverFetchRequest release];
         
+        _serverControllers = [[NSMutableArray alloc] initWithCapacity:servers.count];
+        
         for (Server *server in servers) {
-            _server = [[IrcServer alloc] initWithHost:server.address
-                                                 port:server.port
-                                           serverPass:server.serverPass
-                                                 nick:server.nickname
-                                                 user:server.loginName
-                                                 name:server.realName
-                                             userPass:server.userPass
-                                             delegate:self];
-
-            _autojoinChannels = [[NSMutableArray alloc] initWithCapacity:server.channels.count];
+            ServerController *serverController = [[ServerController alloc] initWithServer:server];
             
-            for (Channel *channel in server.channels) {
-                if (channel.autojoin) {
-                    [_autojoinChannels addObject:channel];
-                }
-            }
+            [_serverControllers addObject:serverController];
+            _activeServerController = serverController;
             
-            _highlightWords = [server.alertWords allObjects];
-            
-            NSMutableDictionary *serverData = [[NSMutableDictionary alloc] initWithCapacity:10];
-            self.serverData = serverData;
-            [serverData release];
+            [serverController release];
             
             _unreadAlerts = 0;
             
@@ -89,9 +75,9 @@
     [_mainView release];
     [_preferences release];
     
-    [_server release];
+    [_serverControllers release];
+    
     [_serverData release];
-    [_autojoinChannels release];
     
     [_highlightWords release];
     
@@ -126,7 +112,9 @@
     self.mainView = mainView;
     [mainView release];
     
-    [_server connect];
+    for (ServerController *serverController in _serverControllers) {
+        [serverController connect];
+    }
     
     [_window makeKeyAndOrderFront:nil];
     
@@ -136,12 +124,12 @@
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)notification {
-    NSMutableDictionary *channelData = [_serverData objectForKey:_currentChannel];
-    
-    [self decrementUnreadAlerts:[[channelData objectForKey:@"unreadAlerts"] intValue]];
-    
-    [channelData setValue:[NSNumber numberWithInt:0] forKey:@"unreadAlerts"];
-    [self.mainView.channelList reloadData];
+//    NSMutableDictionary *channelData = [_serverData objectForKey:_currentChannel];
+//    
+//    [self decrementUnreadAlerts:[[channelData objectForKey:@"unreadAlerts"] intValue]];
+//    
+//    [channelData setValue:[NSNumber numberWithInt:0] forKey:@"unreadAlerts"];
+//    [self.mainView.channelList reloadData];
 }
 
 - (IBAction)showPreferences:(id)sender {
@@ -166,10 +154,8 @@
 #pragma mark -
 #pragma mark Public methods
 
-- (void)doCommand:(NSString *)command {
-    if (_server.connected) {
-        [_server readCommand:command fromChannel:_currentChannel];
-    }
+- (void)sendCommand:(NSString *)command {
+    [_activeServerController readCommand:command];
 }
 
 - (NSInteger)countChannels {
@@ -244,7 +230,7 @@
 
 // TODO: per Objective-C convention "get" should only be used for getting things into a pointer.
 - (NSString *)nick {
-    return [_server nick];
+    return [_activeServerController nick];
 }
 
 - (NSString *)getCurrentChannel {
@@ -256,247 +242,193 @@
 }
 
 #pragma mark -
-#pragma mark IrcServerDelegate methods
+#pragma mark IrcConnectionDelegate methods
 
 // These should probably move into a separate class at some point.
 
-- (void)didConnect {
-    [_server join:@"#vernon"];
-}
+//- (void)didPart:(NSString *)channel byUser:(NSString *)user {
+//    if ([_serverData objectForKey:channel] != nil) {
+//        NSMutableDictionary *channelData = [_serverData objectForKey:channel];
+//        
+//        NSMutableArray *users = [channelData objectForKey:@"users"];
+//        [users removeObject:user];
+//        
+//        NSMutableArray *messages = [channelData objectForKey:@"messages"];
+//        
+//        PartMessage *message = [[PartMessage alloc] initWithUser:user time:[NSDate date]];
+//        [messages addObject:message];
+//        [message release];
+//        
+//        if ([channel isEqualToString:_currentChannel]) {
+//            [self.mainView.messageList reloadData];
+//            [self.mainView.userList reloadData];
+//        }
+//    }
+//}
 
-- (void)didJoin:(NSString *)channel byUser:(NSString *)user {
-    if ([_serverData objectForKey:channel] == nil) { // I joined
-        [self loadChannel:channel];
-        [self.mainView.channelList reloadData];
-        _currentChannel = channel;
-        [self.mainView.messageList reloadData];
-        
-        NSUInteger row = [[_serverData allKeys] indexOfObject:channel];
-        TUIFastIndexPath *indexPath = [TUIFastIndexPath indexPathForRow:row inSection:0];
-        
-        [self.mainView.channelList selectRowAtIndexPath:indexPath];
-        
-        [self updateWindowTitle];
-    } else {
-        NSMutableDictionary *channelData = [_serverData objectForKey:channel];
-        
-        NSMutableArray *users = [channelData objectForKey:@"users"];
-        [users addObject:user];
-        
-        NSMutableArray *messages = [channelData objectForKey:@"messages"];
-        
-        JoinMessage *message = [[JoinMessage alloc] initWithUser:user time:[NSDate date]];
-        [messages addObject:message];
-        [message release];
-        
-        if ([channel isEqualToString:_currentChannel]) {
-            [self.mainView.messageList reloadData];
-            [self.mainView.userList reloadData];
-        }
-    }
-}
+//- (void)didSay:(NSString *)text to:(NSString *)recipient fromUser:(NSString *)sender {
+//    NSString *channel;
+//    NSString *currentNick = [self nick];
+//    
+//    if ([recipient isEqual:currentNick]) { // private message
+//        channel = sender;
+//    } else { // channel message
+//        channel = recipient;
+//    }
+//    
+//    NSMutableDictionary *channelData = [_serverData objectForKey:channel];
+//    if (channelData == nil) {
+//        channelData = [self loadChannel:channel];
+//        [[channelData objectForKey:@"users"] addObjectsFromArray:[NSArray arrayWithObjects:sender, recipient, nil]];
+//    }
+//
+//    NSMutableArray *messages = [channelData objectForKey:@"messages"];
+//    
+//    UserMessage *message = [[UserMessage alloc] initWithText:text user:sender time:[NSDate date]];
+//    [messages addObject:message];
+//    [message release];
+//    
+//    if ([channel isEqualToString:_currentChannel]) {
+//        [self.mainView.messageList reloadData];
+//    } else {
+//        NSNumber *unreadMessages = [channelData objectForKey:@"unreadMessages"];
+//        [channelData setObject:[NSNumber numberWithInt:([unreadMessages intValue] + 1)] forKey:@"unreadMessages"];
+//        [self.mainView.channelList reloadData];
+//    }
+//    
+//    bool appIsInactive = (![NSApp isActive]);
+//    bool channelIsInactive = (![channel isEqualToString:_currentChannel]);
+//    bool shouldAlert = ([text rangeOfString:[self nick] options:NSCaseInsensitiveSearch].location != NSNotFound);
+//    
+//    if (!shouldAlert) {
+//        for (NSString *highlightWord in _highlightWords) {
+//            if ([text rangeOfString:highlightWord options:NSCaseInsensitiveSearch].location != NSNotFound) {
+//                shouldAlert = YES;
+//                break;
+//            }
+//        }
+//    }
+//    
+//    if ((appIsInactive || channelIsInactive) && shouldAlert) {
+//        [self incrementUnreadAlerts];
+//        
+//        // bounce the icon
+//        [NSApp requestUserAttention:NSInformationalRequest];
+//        
+//        int unreadAlerts = [[channelData objectForKey:@"unreadAlerts"] intValue];
+//        [channelData setObject:[NSNumber numberWithInt:unreadAlerts + 1] forKey:@"unreadAlerts"];
+//        
+//        [self.mainView.channelList reloadData];
+//    }
+//}
 
-- (void)didPart:(NSString *)channel byUser:(NSString *)user {
-    if ([_serverData objectForKey:channel] != nil) {
-        NSMutableDictionary *channelData = [_serverData objectForKey:channel];
-        
-        NSMutableArray *users = [channelData objectForKey:@"users"];
-        [users removeObject:user];
-        
-        NSMutableArray *messages = [channelData objectForKey:@"messages"];
-        
-        PartMessage *message = [[PartMessage alloc] initWithUser:user time:[NSDate date]];
-        [messages addObject:message];
-        [message release];
-        
-        if ([channel isEqualToString:_currentChannel]) {
-            [self.mainView.messageList reloadData];
-            [self.mainView.userList reloadData];
-        }
-    }
-}
+//- (void)didTopic:(NSString *)topic onChannel:(NSString *)channel fromUser:(NSString *)user {
+//    NSMutableDictionary *channelData = [_serverData objectForKey:channel];
+//    
+//    NSMutableArray *messages = [channelData objectForKey:@"messages"];
+//    
+//    TopicMessage *message = [[TopicMessage alloc] initWithTopic:topic user:user time:[NSDate date]];
+//    [messages addObject:message];
+//    [message release];
+//    
+//    [channelData setObject:topic forKey:@"topic"];
+//    
+//    if ([channel isEqual:_currentChannel]) {
+//        [self.mainView.messageList reloadData];
+//        [self updateWindowTitle];
+//    }
+//}
 
-- (void)didSay:(NSString *)text to:(NSString *)recipient fromUser:(NSString *)sender {
-    NSString *channel;
-    NSString *currentNick = [self nick];
-    
-    if ([recipient isEqual:currentNick]) { // private message
-        channel = sender;
-    } else { // channel message
-        channel = recipient;
-    }
-    
-    NSMutableDictionary *channelData = [_serverData objectForKey:channel];
-    if (channelData == nil) {
-        channelData = [self loadChannel:channel];
-        [[channelData objectForKey:@"users"] addObjectsFromArray:[NSArray arrayWithObjects:sender, recipient, nil]];
-    }
+//- (void)didNames:(NSArray *)names forChannel:(NSString *)channel {
+//    NSMutableArray *users = [[_serverData objectForKey:channel] objectForKey:@"users"];
+//    
+//    [users addObjectsFromArray:names];
+//    
+//    if ([channel isEqual:_currentChannel]) {
+//        [self.mainView.userList reloadData];
+//    }
+//}
 
-    NSMutableArray *messages = [channelData objectForKey:@"messages"];
-    
-    UserMessage *message = [[UserMessage alloc] initWithText:text user:sender time:[NSDate date]];
-    [messages addObject:message];
-    [message release];
-    
-    if ([channel isEqualToString:_currentChannel]) {
-        [self.mainView.messageList reloadData];
-    } else {
-        NSNumber *unreadMessages = [channelData objectForKey:@"unreadMessages"];
-        [channelData setObject:[NSNumber numberWithInt:([unreadMessages intValue] + 1)] forKey:@"unreadMessages"];
-        [self.mainView.channelList reloadData];
-    }
-    
-    bool appIsInactive = (![NSApp isActive]);
-    bool channelIsInactive = (![channel isEqualToString:_currentChannel]);
-    bool shouldAlert = ([text rangeOfString:[self nick] options:NSCaseInsensitiveSearch].location != NSNotFound);
-    
-    if (!shouldAlert) {
-        for (NSString *highlightWord in _highlightWords) {
-            if ([text rangeOfString:highlightWord options:NSCaseInsensitiveSearch].location != NSNotFound) {
-                shouldAlert = YES;
-                break;
-            }
-        }
-    }
-    
-    if ((appIsInactive || channelIsInactive) && shouldAlert) {
-        [self incrementUnreadAlerts];
-        
-        // bounce the icon
-        [NSApp requestUserAttention:NSInformationalRequest];
-        
-        int unreadAlerts = [[channelData objectForKey:@"unreadAlerts"] intValue];
-        [channelData setObject:[NSNumber numberWithInt:unreadAlerts + 1] forKey:@"unreadAlerts"];
-        
-        [self.mainView.channelList reloadData];
-    }
-}
+//- (void)didNick:(NSString *)nick fromUser:(NSString *)user {
+//    if (_currentChannel != nil) {
+//        NSMutableDictionary *channel = [_serverData objectForKey:_currentChannel];
+//        NSMutableArray *messages = [channel objectForKey:@"messages"];
+//        NSMutableArray *users = [channel objectForKey:@"users"];
+//
+//        [users removeObject:user];
+//        if ([nick isEqual:[_server nick]]) {
+//            [users insertObject:nick atIndex:0];
+//        } else {
+//            [users addObject:nick];            
+//        }
+//        
+//        NickMessage *message = [[NickMessage alloc] initWithOldNick:user newNick:nick time:[NSDate date]];
+//        [messages addObject:message];
+//        [message release];
+//        
+//        [self.mainView.messageList reloadData];
+//        [self.mainView.userList reloadData];
+//    }
+//}
 
-- (void)didTopic:(NSString *)topic onChannel:(NSString *)channel fromUser:(NSString *)user {
-    NSMutableDictionary *channelData = [_serverData objectForKey:channel];
-    
-    NSMutableArray *messages = [channelData objectForKey:@"messages"];
-    
-    TopicMessage *message = [[TopicMessage alloc] initWithTopic:topic user:user time:[NSDate date]];
-    [messages addObject:message];
-    [message release];
-    
-    [channelData setObject:topic forKey:@"topic"];
-    
-    if ([channel isEqual:_currentChannel]) {
-        [self.mainView.messageList reloadData];
-        [self updateWindowTitle];
-    }
-}
-
-- (void)didNames:(NSArray *)names forChannel:(NSString *)channel {
-    NSMutableArray *users = [[_serverData objectForKey:channel] objectForKey:@"users"];
-    
-    [users addObjectsFromArray:names];
-    
-    if ([channel isEqual:_currentChannel]) {
-        [self.mainView.userList reloadData];
-    }
-}
-
-- (void)didNick:(NSString *)nick fromUser:(NSString *)user {
-    if (_currentChannel != nil) {
-        NSMutableDictionary *channel = [_serverData objectForKey:_currentChannel];
-        NSMutableArray *messages = [channel objectForKey:@"messages"];
-        NSMutableArray *users = [channel objectForKey:@"users"];
-
-        [users removeObject:user];
-        if ([nick isEqual:[_server nick]]) {
-            [users insertObject:nick atIndex:0];
-        } else {
-            [users addObject:nick];            
-        }
-        
-        NickMessage *message = [[NickMessage alloc] initWithOldNick:user newNick:nick time:[NSDate date]];
-        [messages addObject:message];
-        [message release];
-        
-        [self.mainView.messageList reloadData];
-        [self.mainView.userList reloadData];
-    }
-}
-
-- (void)didNickInUse:(NSString *)nick {
-    if (_currentChannel != nil) {
-        NSMutableArray *messages = [[_serverData objectForKey:_currentChannel] objectForKey:@"messages"];
-
-        NickInUseMessage *message = [[NickInUseMessage alloc] initWithInUseNick:nick time:[NSDate date]];
-        [messages addObject:message];
-        [message release];
-        
-        [self.mainView.messageList reloadData];
-    }
-}
+//- (void)didNickInUse:(NSString *)nick {
+//    if (_currentChannel != nil) {
+//        NSMutableArray *messages = [[_serverData objectForKey:_currentChannel] objectForKey:@"messages"];
+//
+//        NickInUseMessage *message = [[NickInUseMessage alloc] initWithInUseNick:nick time:[NSDate date]];
+//        [messages addObject:message];
+//        [message release];
+//        
+//        [self.mainView.messageList reloadData];
+//    }
+//}
 
 /**
  * See http://www.leeh.co.uk/draft-mitchell-irc-capabilities-02.html for the CAP command spec.
  */
-- (void)didCapWithSubcommand:(NSString *)subcommand capabilities:(NSArray *)capabilities {
-    if ([capabilities indexOfObject:@"sasl"] != NSNotFound) {
-        if ([subcommand isEqualToString:@"LS"]) {
-            [_server requestCapability:@"sasl"];
-        } else if ([subcommand isEqualToString:@"ACK"]) {
-            [_server authenticate:@"PLAIN"];
-        } else {
-            [_server cancelCapability];
-        }
-    }
-}
+//- (void)didCapWithSubcommand:(NSString *)subcommand capabilities:(NSArray *)capabilities {
+//    if ([capabilities indexOfObject:@"sasl"] != NSNotFound) {
+//        if ([subcommand isEqualToString:@"LS"]) {
+//            [_server requestCapability:@"sasl"];
+//        } else if ([subcommand isEqualToString:@"ACK"]) {
+//            [_server authenticate:@"PLAIN"];
+//        } else {
+//            [_server cancelCapability];
+//        }
+//    }
+//}
 
 /**
  * Encryption bits lifted from http://colloquy.info/project/changeset/5259
  */
-- (void)didAuthenticate:(NSString *)type {
-    if ([type isEqualToString:@"+"]) {
-        NSData *nicknameData = [[self nick] dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]; 
-        
-        NSMutableData *authenticateData = [nicknameData mutableCopy]; 
-        [authenticateData appendBytes:"\0" length:1]; 
-        [authenticateData appendData:nicknameData]; 
-        [authenticateData appendBytes:"\0" length:1]; 
-        [authenticateData appendData:[[_server userPass] dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]]; 
-        
-        NSString *authString = [authenticateData base64EncodingWithLineLength:400];
-        NSArray *authStringParts = [authString componentsSeparatedByString:@"\n"];
-        
-        for (NSString *authStringPart in authStringParts) {
-            [_server authenticate:authStringPart];
-        }
-        
-        // If empty or the last string was exactly 400 bytes we need to send an empty AUTHENTICATE to indicate we're done.
-        if( !authStringParts.count || [[authStringParts lastObject] length] == 400 ) {
-            [_server authenticate:@"+"];
-        }
-    } else {
-        [_server cancelCapability];
-    }
-}
+//- (void)didAuthenticate:(NSString *)type {
+//    if ([type isEqualToString:@"+"]) {
+//        NSData *nicknameData = [[self nick] dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]; 
+//        
+//        NSMutableData *authenticateData = [nicknameData mutableCopy]; 
+//        [authenticateData appendBytes:"\0" length:1]; 
+//        [authenticateData appendData:nicknameData]; 
+//        [authenticateData appendBytes:"\0" length:1]; 
+//        [authenticateData appendData:[[_server userPass] dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]]; 
+//        
+//        NSString *authString = [authenticateData base64EncodingWithLineLength:400];
+//        NSArray *authStringParts = [authString componentsSeparatedByString:@"\n"];
+//        
+//        for (NSString *authStringPart in authStringParts) {
+//            [_server authenticate:authStringPart];
+//        }
+//        
+//        // If empty or the last string was exactly 400 bytes we need to send an empty AUTHENTICATE to indicate we're done.
+//        if( !authStringParts.count || [[authStringParts lastObject] length] == 400 ) {
+//            [_server authenticate:@"+"];
+//        }
+//    } else {
+//        [_server cancelCapability];
+//    }
+//}
 
 #pragma mark -
 #pragma mark Private methods
-
-- (NSMutableDictionary *)loadChannel:(NSString *)channel {
-    NSMutableArray *messages = [[NSMutableArray alloc] initWithCapacity:10];
-    NSMutableArray *users = [[NSMutableArray alloc] initWithCapacity:10];
-    
-    NSMutableDictionary *channelData = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                        messages, @"messages",
-                                        users, @"users",
-                                        [NSNumber numberWithInt:0], @"unreadMessages",
-                                        [NSNumber numberWithInt:0], @"unreadAlerts",
-                                        nil];
-    [messages release];
-    [users release];
-    
-    [_serverData setObject:channelData forKey:channel];
-    
-    return channelData;
-}
 
 - (void)incrementUnreadAlerts {
     [self setUnreadAlerts:_unreadAlerts + 1];

@@ -83,7 +83,7 @@
 - (void)handleReturn:(TUITextField *)field {
     NSString *command = field.text;
     if (![command isEqualToString:@""]) {
-        [_appDelegate doCommand:command];
+        [_appDelegate sendCommand:command];
 		field.text = @"";
     }
 }

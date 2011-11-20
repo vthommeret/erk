@@ -9,20 +9,24 @@
 #import <Cocoa/Cocoa.h>
 #import <CoreData/CoreData.h>
 #import "TUIKit.h"
-#import "IrcServer.h"
 
-@class PreferencesController, MainView, Message;
+#import "MainView.h"
 
-@interface erkAppDelegate : NSObject <NSApplicationDelegate, IrcServerDelegate>
+@class ServerController;
+@class PreferencesController;
+@class Message;
+
+@interface erkAppDelegate : NSObject <NSApplicationDelegate>
 {
 	NSWindow *_window;
     MainView *_mainView;
     PreferencesController *_preferences;
     
-    IrcServer *_server;
+    NSMutableArray *_serverControllers;
+    ServerController *_activeServerController;
+    
     NSMutableDictionary *_serverData;
     NSString *_currentChannel;
-    NSMutableArray *_autojoinChannels;
     
     NSArray *_highlightWords;
     
@@ -51,7 +55,7 @@
 
 - (void)updateWindowTitle;
 
-- (void)doCommand:(NSString *)command;
+- (void)sendCommand:(NSString *)command;
 - (NSInteger)countChannels;
 - (NSString *)channelNameForRow:(NSInteger)row;
 - (NSMutableDictionary *)channelDataForName:(NSString *)name;
@@ -65,7 +69,6 @@
 - (NSString *)getCurrentChannel;
 - (NSArray *)highlightWords;
 
-- (NSMutableDictionary *)loadChannel:(NSString *)channel;
 - (void)incrementUnreadAlerts;
 - (void)decrementUnreadAlerts:(int)numAlerts;
 - (void)clearUnreadAlerts;

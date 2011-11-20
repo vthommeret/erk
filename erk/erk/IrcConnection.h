@@ -1,5 +1,5 @@
 //
-//  IrcServer.h
+//  IrcConnection.h
 //  erk
 //
 //  Created by Vernon Thommeret on 1/16/11.
@@ -32,9 +32,9 @@
 #define kNickInUse      @"433"
 
 @class GCDAsyncSocket;
-@protocol IrcServerDelegate;
+@protocol IrcConnectionDelegate;
 
-@interface IrcServer : NSObject {
+@interface IrcConnection : NSObject {
     dispatch_queue_t _socketQueue;
     GCDAsyncSocket *_serverSocket;
     BOOL _connected;
@@ -46,7 +46,7 @@
     NSString *_user;
     NSString *_name;
     NSString *_userPass;
-    id<IrcServerDelegate> _delegate;
+    id<IrcConnectionDelegate> _delegate;
 }
 
 @property (nonatomic, assign) BOOL connected;
@@ -54,7 +54,7 @@
 
 - (id)initWithHost:(NSString *)host port:(NSInteger)port serverPass:(NSString *)serverPass nick:(NSString *)nick user:(NSString *)user
               name:(NSString *)name userPass:(NSString *)userPass
-          delegate:(id<IrcServerDelegate>)delegate;
+          delegate:(id<IrcConnectionDelegate>)delegate;
 - (void)connect;
 - (void)readCommand:(NSString *)line fromChannel:(NSString *)channel;
 - (void)join:(NSString *)channel;
@@ -76,9 +76,9 @@
 @end
 
 #pragma mark -
-#pragma mark IrcServerDelegate Protocol
+#pragma mark IrcConnectionDelegate Protocol
 
-@protocol IrcServerDelegate <NSObject>
+@protocol IrcConnectionDelegate <NSObject>
 
 @optional
 
