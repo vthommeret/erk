@@ -49,7 +49,7 @@
         _serverControllers = [[NSMutableArray alloc] initWithCapacity:servers.count];
         
         for (Server *server in servers) {
-            ServerController *serverController = [[ServerController alloc] initWithServer:server];
+            ServerController *serverController = [[ServerController alloc] initWithServer:server appDelegate:self];
             
             [_serverControllers addObject:serverController];
             _activeServerController = serverController;
@@ -137,15 +137,17 @@
 }
 
 - (void)updateWindowTitle {
-    NSMutableDictionary *channelData = [_serverData objectForKey:_currentChannel];
+    NSMutableDictionary *channelData = [_activeServerController activeChannelData];
     NSString *topic = [channelData objectForKey:@"topic"];
     
     NSString *title;
     
+    NSString *activeChannelName = [_activeServerController activeChannelName];
+    
     if (topic == nil || [topic isEqualToString:@""]) {
-        title = [NSString stringWithFormat:@"%@", _currentChannel];
+        title = [NSString stringWithFormat:@"%@", activeChannelName];
     } else {
-        title = [NSString stringWithFormat:@"%@ — %@", _currentChannel, topic];
+        title = [NSString stringWithFormat:@"%@ — %@", activeChannelName, topic];
     }
     
     [_window setTitle:title];
@@ -159,45 +161,47 @@
 }
 
 - (NSInteger)countChannels {
-    return [_serverData count];
+    return [_activeServerController countChannels];
 }
 
 - (NSString *)channelNameForRow:(NSInteger)row {
-    return [[_serverData allKeys] objectAtIndex:row];
+    return [_activeServerController channelNameForRow:row];
 }
 
 - (NSMutableDictionary *)channelDataForName:(NSString *)name {
-    return [_serverData objectForKey:name];
+    return [_activeServerController channelDataForName:name];
 }
 
 - (void)setCurrentChannelForRow:(NSInteger)row {
-    _currentChannel = [self channelNameForRow:row];
-    
-    NSMutableDictionary *channelData = [_serverData objectForKey:_currentChannel];
-    
-    [self decrementUnreadAlerts:[[channelData objectForKey:@"unreadAlerts"] intValue]];
-    
-    [channelData setValue:[NSNumber numberWithInt:0] forKey:@"unreadMessages"];
-    [channelData setValue:[NSNumber numberWithInt:0] forKey:@"unreadAlerts"];
-    
-    [self.mainView.channelList reloadData];
-    [self.mainView.messageList reloadData];
-    [self.mainView.userList reloadData];
-    
-    [self updateWindowTitle];
+//    _currentChannel = [self channelNameForRow:row];
+//    
+//    NSMutableDictionary *channelData = [_activeServerController activeChannelData];
+//    
+//    [self decrementUnreadAlerts:[[channelData objectForKey:@"unreadAlerts"] intValue]];
+//    
+//    [channelData setValue:[NSNumber numberWithInt:0] forKey:@"unreadMessages"];
+//    [channelData setValue:[NSNumber numberWithInt:0] forKey:@"unreadAlerts"];
+//    
+//    [self.mainView.channelList reloadData];
+//    [self.mainView.messageList reloadData];
+//    [self.mainView.userList reloadData];
+//    
+//    [self updateWindowTitle];
 }
 
 - (NSInteger)countUsers {
-    if (_currentChannel != nil) {
-        return [[[_serverData objectForKey:_currentChannel] objectForKey:@"users"] count];
+    if ([_activeServerController activeChannelName] != nil) {
+        return [[[_activeServerController activeChannelData] objectForKey:@"users"] count];
     }
     return 0;
 }
 
 - (void)sortUsers {
-    if (_currentChannel != nil) {
+    NSString *activeChannelName = [_activeServerController activeChannelName];
+    
+    if (activeChannelName != nil) {
         NSString *currentNick = [self nick];
-        NSMutableDictionary *channelData = [_serverData objectForKey:_currentChannel];
+        NSMutableDictionary *channelData = [_serverData objectForKey:activeChannelName];
         
         NSMutableArray *users = [channelData objectForKey:@"users"];
         
@@ -214,18 +218,18 @@
 }
 
 - (NSString *)userForRow:(NSInteger)row {
-    return [[[_serverData objectForKey:_currentChannel] objectForKey:@"users"] objectAtIndex:row];
+    return [[[_activeServerController activeChannelData] objectForKey:@"users"] objectAtIndex:row];
 }
 
 - (NSInteger)countMessages {
-    if (_currentChannel != nil) {
-        return [[[_serverData objectForKey:_currentChannel] objectForKey:@"messages"] count];
+    if ([_activeServerController activeChannelName] != nil) {
+        return [[[_activeServerController activeChannelData] objectForKey:@"messages"] count];
     }
     return 0;
 }
 
 - (Message *)messageForRow:(NSInteger)row {
-    return [[[_serverData objectForKey:_currentChannel] objectForKey:@"messages"] objectAtIndex:row];
+    return [[[_activeServerController activeChannelData] objectForKey:@"messages"] objectAtIndex:row];
 }
 
 // TODO: per Objective-C convention "get" should only be used for getting things into a pointer.
@@ -234,7 +238,7 @@
 }
 
 - (NSString *)getCurrentChannel {
-    return _currentChannel;
+    return [_activeServerController activeChannelName];
 }
 
 - (NSArray *)highlightWords {

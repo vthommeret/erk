@@ -26,7 +26,6 @@
     ServerController *_activeServerController;
     
     NSMutableDictionary *_serverData;
-    NSString *_currentChannel;
     
     NSArray *_highlightWords;
     

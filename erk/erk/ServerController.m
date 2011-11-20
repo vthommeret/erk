@@ -19,7 +19,7 @@
 
 @implementation ServerController
 
-- (id)initWithServer:(Server *)server {
+- (id)initWithServer:(Server *)server appDelegate:(erkAppDelegate *)appDelegate {
     if (self = [super init]) {
         _server = [server retain];
         
@@ -50,7 +50,7 @@
         
         /** App delegate. Clean up later. */
         
-        _appDelegate = (erkAppDelegate *) [NSApplication sharedApplication].delegate;
+        _appDelegate = appDelegate;
     }
     return self;
 }
@@ -66,13 +66,7 @@
     [_connection connect];
 }
 
-// TODO: return live nickname, rather than stored in model?
-- (NSString *)nick {
-    return _server.nickname;
-}
-
 - (void)readCommand:(NSString *)command {
-    NSLog(@"reading command: %@", command);
     // TODO: _connection.state. connecting, connected, disconnected
     if (_connection.connected && _activeChannel != nil) {
         [_connection readCommand:command fromChannel:_activeChannel.name];
@@ -80,10 +74,42 @@
 }
 
 #pragma mark -
+#pragma mark Legacy methods for refactoring
+
+// temp: return live nickname, rather than stored in model?
+- (NSString *)nick {
+    return _server.nickname;
+}
+
+// temp
+- (NSInteger)countChannels {
+    return [[_data allKeys] count];
+}
+
+// temp
+- (NSString *)channelNameForRow:(NSInteger)row {
+    return [[_data allKeys] objectAtIndex:row];
+}
+
+// temp
+- (NSMutableDictionary *)activeChannelData {
+    return [self channelDataForName:_activeChannel.name];
+}
+
+// temp
+- (NSMutableDictionary *)channelDataForName:(NSString *)name {
+    return [_data objectForKey:name];
+}
+
+// temp
+- (NSString *)activeChannelName {
+    return _activeChannel.name;
+}
+
+#pragma mark -
 #pragma mark IrcConnectionDelegate methods
 
 - (void)didConnect {
-    NSLog(@"did connect");
     // TODO: Create ChannelController
     for (Channel *channel in _autojoinChannels) {
         [_connection join:channel.name];

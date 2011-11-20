@@ -27,11 +27,17 @@
     erkAppDelegate *_appDelegate;
 }
 
-- (id)initWithServer:(Server *)server;
+- (id)initWithServer:(Server *)server appDelegate:(erkAppDelegate *)appDelegate;
 - (void)connect;
-- (NSString *)nick; // temp
 
 - (void)readCommand:(NSString *)command;
+
+- (NSString *)nick; // temp
+- (NSInteger)countChannels; // temp
+- (NSString *)channelNameForRow:(NSInteger)row; // temp
+- (NSMutableDictionary *)activeChannelData; // temp
+- (NSMutableDictionary *)channelDataForName:(NSString *)name; // temp
+- (NSString *)activeChannelName; // temp
 
 - (NSMutableDictionary *)loadChannel:(NSString *)channel;
 
