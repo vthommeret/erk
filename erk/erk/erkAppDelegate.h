@@ -14,7 +14,7 @@
 
 @class ServerController;
 @class PreferencesController;
-@class Message;
+@class OldMessage;
 
 @interface erkAppDelegate : NSObject <NSApplicationDelegate>
 {
@@ -65,7 +65,7 @@
 - (void)sortUsers;
 - (NSString *)userForRow:(NSInteger)row;
 - (NSInteger)countMessages;
-- (Message *)messageForRow:(NSInteger)row;
+- (OldMessage *)messageForRow:(NSInteger)row;
 - (NSString *)nick;
 - (NSString *)getCurrentChannel;
 - (NSArray *)highlightWords;

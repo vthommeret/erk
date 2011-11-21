@@ -50,11 +50,6 @@
     [_tableView reloadData];
 }
 
-- (void)reloadData {
-    NSLog(@"shouldn't really be called anymore");
-    [_tableView reloadData];
-}
-
 - (void)selectRowAtIndexPath:(TUIFastIndexPath *)indexPath {
     [[NSInvocation invokeOnMainThreadWithTarget:self.tableView] selectRowAtIndexPath:indexPath
                                                                             animated:YES

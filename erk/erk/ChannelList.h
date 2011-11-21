@@ -15,7 +15,6 @@
 }
 
 - (id)initWithFrame:(CGRect)b;
-- (void)reloadData;
 - (void)selectRowAtIndexPath:(TUIFastIndexPath *)indexPath;
 
 @property (nonatomic, retain) TUITableView *tableView;

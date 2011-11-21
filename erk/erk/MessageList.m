@@ -10,9 +10,13 @@
 #import "MainView.h"
 #import "MainTableViewCell.h"
 
+#import "ServerController.h"
+#import "Message.h"
+#import "UserMessage.h"
+
 #import "ChannelList.h"
 #import "UserList.h"
-#import "Message.h"
+#import "OldMessage.h"
 
 @implementation MessageList
 
@@ -29,6 +33,8 @@
         
         self.tableView = tableView;
         [tableView release];
+        
+        [[self messagesController] addObserver:self forKeyPath:@"arrangedObjects" options:0 context:nil];
     }
     return self;
 }
@@ -39,7 +45,14 @@
     [super dealloc];
 }
 
-- (void)reloadData {
+- (NSArrayController *)messagesController {
+    return _appDelegate.activeServerController.messagesController;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+
+    NSLog(@"observing messages: %@ (%@)", object, change);
+    
     [_tableView reloadData];
 }
 
@@ -48,7 +61,7 @@
 
 - (NSInteger)tableView:(TUITableView *)table numberOfRowsInSection:(NSInteger)section
 {
-	return [_appDelegate countMessages];
+	return [[self messagesController].arrangedObjects count];
 }
 
 - (CGFloat)tableView:(TUITableView *)tableView heightForRowAtIndexPath:(TUIFastIndexPath *)indexPath
@@ -61,15 +74,16 @@
 {
 	MainTableViewCell *cell = reusableTableCellOfClass(tableView, MainTableViewCell);
     
-    Message *message = [_appDelegate messageForRow:indexPath.row];
+    Message *message = [[self messagesController].arrangedObjects objectAtIndex:indexPath.row];
+    
     TUIAttributedString *attributedString;
     
     // TODO: Have subclasses of MainTableViewCell that are initialized with different type of messages and do appropriate drawing.
     
     if ([message class] == [UserMessage class]) {
-        UserMessage *userMessage = (UserMessage *)message;
+        UserMessage *userMessage = (UserMessage *) message;
         
-        NSString *prefix = [NSString stringWithFormat:@"%@ %@: ", [message getFormattedTime], userMessage.user];
+        NSString *prefix = [NSString stringWithFormat:@"%@ %@: ", [message getFormattedTime], userMessage.nickname];
         NSString *messageBody = [NSString stringWithFormat:@"%@%@", prefix, userMessage.text];
         
         attributedString = [TUIAttributedString stringWithString:messageBody];
@@ -78,7 +92,7 @@
         
         NSString *currentNick = [_appDelegate nick];
         
-        if (userMessage.user != currentNick) {
+        if (userMessage.nickname != currentNick) {
             NSUInteger start = [prefix length];
             NSUInteger len = [messageBody length];
             

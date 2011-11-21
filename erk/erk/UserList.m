@@ -48,12 +48,6 @@
     [_tableView reloadData];
 }
 
-- (void)reloadData {
-    // shouldn't really be called anymore
-    [_appDelegate sortUsers];
-    [_tableView reloadData];
-}
-
 #pragma mark -
 #pragma mark TUITableView methods
 

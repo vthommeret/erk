@@ -15,7 +15,7 @@
 }
 
 - (id)initWithFrame:(CGRect)b;
-- (void)reloadData;
+- (NSArrayController *)messagesController;
 
 @property (nonatomic, retain) TUITableView *tableView;
 

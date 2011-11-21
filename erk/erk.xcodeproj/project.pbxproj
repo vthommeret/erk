@@ -34,7 +34,7 @@
 		3D288ABD13C17BC900F137BC /* MessageList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288ABC13C17BC900F137BC /* MessageList.m */; };
 		3D288AC613C1894700F137BC /* IrcConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288AC513C1894600F137BC /* IrcConnection.m */; };
 		3D288ADD13C18AF100F137BC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D288ADC13C18AF100F137BC /* Security.framework */; };
-		3D288AE813C198BD00F137BC /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288AE713C198BD00F137BC /* Message.m */; };
+		3D288AE813C198BD00F137BC /* OldMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288AE713C198BD00F137BC /* OldMessage.m */; };
 		3D288AFD13C22FB100F137BC /* MessageToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D288AFC13C22FB000F137BC /* MessageToolbar.m */; };
 		3D36EA461478BF68001E5D30 /* ABActiveRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D36E9DD1478BF68001E5D30 /* ABActiveRange.m */; };
 		3D36EA471478BF68001E5D30 /* CoreText+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D36E9DF1478BF68001E5D30 /* CoreText+Additions.m */; };
@@ -99,6 +99,8 @@
 		3DF61C9B14798A2800E63D4A /* ServerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DF61C9A14798A2800E63D4A /* ServerController.m */; };
 		3DF61CAB1479FC9200E63D4A /* PreferencesServersController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DF61CAA1479FC9200E63D4A /* PreferencesServersController.m */; };
 		3DF61CAF147A1C7900E63D4A /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DF61CAE147A1C7800E63D4A /* User.m */; };
+		3DF61CB9147A297B00E63D4A /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DF61CB8147A297900E63D4A /* Message.m */; };
+		3DF61CBC147A29F000E63D4A /* UserMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DF61CBB147A29EE00E63D4A /* UserMessage.m */; };
 		9826AB3F13D651640021B950 /* erkDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9826AB3D13D651640021B950 /* erkDataModel.xcdatamodeld */; };
 		9826AB4213D658320021B950 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9826AB4113D658320021B950 /* CoreData.framework */; };
 /* End PBXBuildFile section */
@@ -163,8 +165,8 @@
 		3D288AC413C1894600F137BC /* IrcConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IrcConnection.h; sourceTree = "<group>"; };
 		3D288AC513C1894600F137BC /* IrcConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IrcConnection.m; sourceTree = "<group>"; };
 		3D288ADC13C18AF100F137BC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		3D288AE613C198BD00F137BC /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; path = Message.h; sourceTree = "<group>"; };
-		3D288AE713C198BD00F137BC /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
+		3D288AE613C198BD00F137BC /* OldMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OldMessage.h; sourceTree = "<group>"; };
+		3D288AE713C198BD00F137BC /* OldMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OldMessage.m; sourceTree = "<group>"; };
 		3D288AFB13C22FAF00F137BC /* MessageToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageToolbar.h; sourceTree = "<group>"; };
 		3D288AFC13C22FB000F137BC /* MessageToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageToolbar.m; sourceTree = "<group>"; };
 		3D36E9DC1478BF68001E5D30 /* ABActiveRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ABActiveRange.h; sourceTree = "<group>"; };
@@ -291,6 +293,10 @@
 		3DF61CAA1479FC9200E63D4A /* PreferencesServersController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesServersController.m; sourceTree = "<group>"; };
 		3DF61CAD147A1C7800E63D4A /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
 		3DF61CAE147A1C7800E63D4A /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		3DF61CB7147A297800E63D4A /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		3DF61CB8147A297900E63D4A /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
+		3DF61CBA147A29EE00E63D4A /* UserMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMessage.h; sourceTree = "<group>"; };
+		3DF61CBB147A29EE00E63D4A /* UserMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserMessage.m; sourceTree = "<group>"; };
 		9826AB3E13D651640021B950 /* erkDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = erkDataModel.xcdatamodel; sourceTree = "<group>"; };
 		9826AB4113D658320021B950 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -358,6 +364,7 @@
 				3DF2360D1479086200D11716 /* AlertWord.m */,
 				3DF61CAD147A1C7800E63D4A /* User.h */,
 				3DF61CAE147A1C7800E63D4A /* User.m */,
+				3DF61CB3147A291F00E63D4A /* Messages */,
 			);
 			name = "Core Data";
 			sourceTree = "<group>";
@@ -470,8 +477,8 @@
 		3D288AEA13C198C200F137BC /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				3D288AE613C198BD00F137BC /* Message.h */,
-				3D288AE713C198BD00F137BC /* Message.m */,
+				3D288AE613C198BD00F137BC /* OldMessage.h */,
+				3D288AE713C198BD00F137BC /* OldMessage.m */,
 				3D12D16C13F85AC4005C192A /* Core Data */,
 			);
 			name = Models;
@@ -648,6 +655,17 @@
 			name = Network;
 			sourceTree = "<group>";
 		};
+		3DF61CB3147A291F00E63D4A /* Messages */ = {
+			isa = PBXGroup;
+			children = (
+				3DF61CB7147A297800E63D4A /* Message.h */,
+				3DF61CB8147A297900E63D4A /* Message.m */,
+				3DF61CBA147A29EE00E63D4A /* UserMessage.h */,
+				3DF61CBB147A29EE00E63D4A /* UserMessage.m */,
+			);
+			name = Messages;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -766,7 +784,7 @@
 				3D288AA813C1738400F137BC /* UserList.m in Sources */,
 				3D288ABD13C17BC900F137BC /* MessageList.m in Sources */,
 				3D288AC613C1894700F137BC /* IrcConnection.m in Sources */,
-				3D288AE813C198BD00F137BC /* Message.m in Sources */,
+				3D288AE813C198BD00F137BC /* OldMessage.m in Sources */,
 				3D288AFD13C22FB100F137BC /* MessageToolbar.m in Sources */,
 				9826AB3F13D651640021B950 /* erkDataModel.xcdatamodeld in Sources */,
 				3D90CD5513ED9A4100B328CA /* NSInvocation+ForwardedConstruction.m in Sources */,
@@ -839,6 +857,8 @@
 				3DF61C9B14798A2800E63D4A /* ServerController.m in Sources */,
 				3DF61CAB1479FC9200E63D4A /* PreferencesServersController.m in Sources */,
 				3DF61CAF147A1C7900E63D4A /* User.m in Sources */,
+				3DF61CB9147A297B00E63D4A /* Message.m in Sources */,
+				3DF61CBC147A29F000E63D4A /* UserMessage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

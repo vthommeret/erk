@@ -29,10 +29,12 @@
     
     NSArrayController *_channelsController;
     NSArrayController *_usersController;
+    NSArrayController *_messagesController;
 }
 
 @property (nonatomic, retain) NSArrayController *channelsController;
 @property (nonatomic, retain) NSArrayController *usersController;
+@property (nonatomic, retain) NSArrayController *messagesController;
 
 - (id)initWithServer:(Server *)server appDelegate:(erkAppDelegate *)appDelegate;
 - (void)connect;

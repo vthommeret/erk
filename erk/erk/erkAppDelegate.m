@@ -230,7 +230,7 @@
     return 0;
 }
 
-- (Message *)messageForRow:(NSInteger)row {
+- (OldMessage *)messageForRow:(NSInteger)row {
     return [[[_activeServerController activeChannelData] objectForKey:@"messages"] objectAtIndex:row];
 }
 

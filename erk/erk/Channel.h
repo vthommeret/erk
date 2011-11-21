@@ -26,6 +26,11 @@
 + (Channel *)insertChannelInContext:(NSManagedObjectContext *)context;
 + (NSEntityDescription *)entityDescriptionInContext:(NSManagedObjectContext *)context;
 
+- (void)addMessage:(NSManagedObject *)value;
+- (void)removeMessage:(NSManagedObject *)value;
+- (void)addMessages:(NSSet *)value;
+- (void)removeMessages:(NSSet *)value;
+
 - (void)addUser:(NSManagedObject *)value;
 - (void)removeUser:(NSManagedObject *)value;
 - (void)addUsers:(NSSet *)value;

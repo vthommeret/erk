@@ -12,8 +12,9 @@
 #import "Server.h"
 #import "Channel.h"
 
-#import "Message.h"
+#import "OldMessage.h"
 #import "User.h"
+#import "UserMessage.h"
 
 #import "erkAppDelegate.h"
 
@@ -21,6 +22,7 @@
 
 @synthesize channelsController = _channelsController;
 @synthesize usersController = _usersController;
+@synthesize messagesController = _messagesController;
 
 - (id)initWithServer:(Server *)server appDelegate:(erkAppDelegate *)appDelegate {
     if (self = [super init]) {
@@ -69,6 +71,17 @@
         NSArrayController *usersController = [[NSArrayController alloc] init];
         self.usersController = usersController;
         [usersController release];
+        
+        /** MessagesArrayController */
+        
+        NSArrayController *messagesController = [[NSArrayController alloc] init];
+        
+        NSSortDescriptor *sortTime = [[NSSortDescriptor alloc] initWithKey:@"time" ascending:YES];
+        [messagesController setSortDescriptors:[NSArray arrayWithObject:sortTime]];
+        [sortTime release];
+        
+        self.messagesController = messagesController;
+        [messagesController release];
     }
     return self;
 }
@@ -79,6 +92,7 @@
     [_data release];
     [_channelsController release];
     [_usersController release];
+    [_messagesController release];
     [super dealloc];
 }
 
@@ -146,6 +160,7 @@
         
         // Terrible place for this to live... But for now.
         [_usersController bind:@"contentSet" toObject:_activeChannel withKeyPath:@"users" options:nil];
+        [_messagesController bind:@"contentSet" toObject:_activeChannel withKeyPath:@"messages" options:nil];
         
         [_server addChannel:newChannel];
     }
@@ -198,7 +213,12 @@
     }
     
     Channel *channel = [self channelForName:channelName];
-    channel;
+    if (channel != nil) {
+        UserMessage *userMessage = [UserMessage insertUserMessageInContext:_managedObjectContext];
+        userMessage.nickname = sender;
+        userMessage.text = text;
+        [channel addMessage:userMessage];
+    }
 }
 
 - (void)didNames:(NSArray *)names forChannel:(NSString *)channelName {

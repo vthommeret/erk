@@ -20,6 +20,8 @@
 - (NSNumber *)primitiveAutojoin;
 - (void)setPrimitiveAutojoin:(NSNumber *)value;
 
+- (NSMutableSet *)primitiveMessages;
+
 - (NSMutableSet *)primitiveUsers;
 
 @end
@@ -92,7 +94,33 @@
     [self didChangeValueForKey:@"autojoin"];
 }
 
-// channel object methods
+// message object methods
+
+- (void)addMessage:(NSManagedObject *)value {
+    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
+    [self addMessages:changedObjects];
+    [changedObjects release];
+}
+
+- (void)removeMessage:(NSManagedObject *)value {
+    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
+    [self removeMessages:changedObjects];
+    [changedObjects release];
+}
+
+- (void)addMessages:(NSSet *)value {
+    [self willChangeValueForKey:@"messages" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
+    [[self primitiveMessages] unionSet:value];
+    [self didChangeValueForKey:@"messages" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
+}
+
+- (void)removeMessages:(NSSet *)value {
+    [self willChangeValueForKey:@"messages" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
+    [[self primitiveMessages] minusSet:value];
+    [self didChangeValueForKey:@"messages" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
+}
+
+// user object methods
 
 - (void)addUser:(NSManagedObject *)value {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
