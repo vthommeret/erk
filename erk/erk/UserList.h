@@ -18,5 +18,6 @@
 
 - (id)initWithFrame:(CGRect)b;
 - (void)reloadData;
+- (NSArrayController *)usersController;
 
 @end

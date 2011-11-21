@@ -20,4 +20,6 @@
 
 @property (nonatomic, retain) TUITableView *tableView;
 
+- (NSArrayController *)channelsController;
+
 @end

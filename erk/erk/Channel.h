@@ -14,7 +14,8 @@
 @interface Channel : NSManagedObject
 
 @property (nonatomic, retain) NSString *modes;
-@property (nonatomic, retain) NSNumber *unreadCount;
+@property (nonatomic, assign) NSInteger unreadCount;
+@property (nonatomic, assign) NSInteger unreadAlerts;
 @property (nonatomic, retain) NSString *topic;
 @property (nonatomic, assign) BOOL autojoin;
 @property (nonatomic, retain) NSString *name;
@@ -24,5 +25,10 @@
 
 + (Channel *)insertChannelInContext:(NSManagedObjectContext *)context;
 + (NSEntityDescription *)entityDescriptionInContext:(NSManagedObjectContext *)context;
+
+- (void)addUser:(NSManagedObject *)value;
+- (void)removeUser:(NSManagedObject *)value;
+- (void)addUsers:(NSSet *)value;
+- (void)removeUsers:(NSSet *)value;
 
 @end

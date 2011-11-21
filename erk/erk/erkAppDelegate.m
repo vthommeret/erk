@@ -26,6 +26,8 @@
 
 @synthesize mainView = _mainView;
 
+@synthesize activeServerController = _activeServerController;
+
 @synthesize serverData = _serverData;
 
 @synthesize mediumFont = _helvetica15;
@@ -270,62 +272,6 @@
 //    }
 //}
 
-//- (void)didSay:(NSString *)text to:(NSString *)recipient fromUser:(NSString *)sender {
-//    NSString *channel;
-//    NSString *currentNick = [self nick];
-//    
-//    if ([recipient isEqual:currentNick]) { // private message
-//        channel = sender;
-//    } else { // channel message
-//        channel = recipient;
-//    }
-//    
-//    NSMutableDictionary *channelData = [_serverData objectForKey:channel];
-//    if (channelData == nil) {
-//        channelData = [self loadChannel:channel];
-//        [[channelData objectForKey:@"users"] addObjectsFromArray:[NSArray arrayWithObjects:sender, recipient, nil]];
-//    }
-//
-//    NSMutableArray *messages = [channelData objectForKey:@"messages"];
-//    
-//    UserMessage *message = [[UserMessage alloc] initWithText:text user:sender time:[NSDate date]];
-//    [messages addObject:message];
-//    [message release];
-//    
-//    if ([channel isEqualToString:_currentChannel]) {
-//        [self.mainView.messageList reloadData];
-//    } else {
-//        NSNumber *unreadMessages = [channelData objectForKey:@"unreadMessages"];
-//        [channelData setObject:[NSNumber numberWithInt:([unreadMessages intValue] + 1)] forKey:@"unreadMessages"];
-//        [self.mainView.channelList reloadData];
-//    }
-//    
-//    bool appIsInactive = (![NSApp isActive]);
-//    bool channelIsInactive = (![channel isEqualToString:_currentChannel]);
-//    bool shouldAlert = ([text rangeOfString:[self nick] options:NSCaseInsensitiveSearch].location != NSNotFound);
-//    
-//    if (!shouldAlert) {
-//        for (NSString *highlightWord in _highlightWords) {
-//            if ([text rangeOfString:highlightWord options:NSCaseInsensitiveSearch].location != NSNotFound) {
-//                shouldAlert = YES;
-//                break;
-//            }
-//        }
-//    }
-//    
-//    if ((appIsInactive || channelIsInactive) && shouldAlert) {
-//        [self incrementUnreadAlerts];
-//        
-//        // bounce the icon
-//        [NSApp requestUserAttention:NSInformationalRequest];
-//        
-//        int unreadAlerts = [[channelData objectForKey:@"unreadAlerts"] intValue];
-//        [channelData setObject:[NSNumber numberWithInt:unreadAlerts + 1] forKey:@"unreadAlerts"];
-//        
-//        [self.mainView.channelList reloadData];
-//    }
-//}
-
 //- (void)didTopic:(NSString *)topic onChannel:(NSString *)channel fromUser:(NSString *)user {
 //    NSMutableDictionary *channelData = [_serverData objectForKey:channel];
 //    
@@ -340,16 +286,6 @@
 //    if ([channel isEqual:_currentChannel]) {
 //        [self.mainView.messageList reloadData];
 //        [self updateWindowTitle];
-//    }
-//}
-
-//- (void)didNames:(NSArray *)names forChannel:(NSString *)channel {
-//    NSMutableArray *users = [[_serverData objectForKey:channel] objectForKey:@"users"];
-//    
-//    [users addObjectsFromArray:names];
-//    
-//    if ([channel isEqual:_currentChannel]) {
-//        [self.mainView.userList reloadData];
 //    }
 //}
 

@@ -14,6 +14,7 @@
 - (void)setPrimitivePort:(NSNumber *)value;
 
 - (NSMutableSet *)primitiveChannels;
+// setPrimitiveChannels isn't used so we're not defining it.
 
 - (NSMutableSet *)primitiveAlertWords;
 
@@ -42,7 +43,7 @@
     return [NSEntityDescription entityForName:@"Server" inManagedObjectContext:context];
 }
 
-// Port accessors
+// port accessors
 
 - (NSInteger)port {
     [self willAccessValueForKey:@"port"];
@@ -57,7 +58,7 @@
     [self didChangeValueForKey:@"port"];
 }
 
-// Channel object methods
+// channel object methods
 
 - (void)addChannel:(NSManagedObject *)value {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
@@ -83,7 +84,7 @@
     [self didChangeValueForKey:@"channels" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
 }
 
-// AlertWord object methods
+// alertWord object methods
 
 - (void)addAlertWord:(NSManagedObject *)value {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];

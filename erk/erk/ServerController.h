@@ -25,7 +25,14 @@
     Channel *_activeChannel;
     
     erkAppDelegate *_appDelegate;
+    NSManagedObjectContext *_managedObjectContext;
+    
+    NSArrayController *_channelsController;
+    NSArrayController *_usersController;
 }
+
+@property (nonatomic, retain) NSArrayController *channelsController;
+@property (nonatomic, retain) NSArrayController *usersController;
 
 - (id)initWithServer:(Server *)server appDelegate:(erkAppDelegate *)appDelegate;
 - (void)connect;
@@ -39,6 +46,6 @@
 - (NSMutableDictionary *)channelDataForName:(NSString *)name; // temp
 - (NSString *)activeChannelName; // temp
 
-- (NSMutableDictionary *)loadChannel:(NSString *)channel;
+- (Channel *)channelForName:(NSString *)name;
 
 @end

@@ -13,11 +13,14 @@
 #import "Channel.h"
 
 #import "Message.h"
-#import "ChannelList.h" // temp until we have cleaner methods on erkAppDelegate or other.
+#import "User.h"
 
 #import "erkAppDelegate.h"
 
 @implementation ServerController
+
+@synthesize channelsController = _channelsController;
+@synthesize usersController = _usersController;
 
 - (id)initWithServer:(Server *)server appDelegate:(erkAppDelegate *)appDelegate {
     if (self = [super init]) {
@@ -50,7 +53,22 @@
         
         /** App delegate. Clean up later. */
         
+        // If app delegate is unneeded after refactoring... delete it.
         _appDelegate = appDelegate;
+        _managedObjectContext = _appDelegate.managedObjectContext;
+        
+        /** ChannelsArrayController */
+        
+        NSArrayController *channelsController = [[NSArrayController alloc] init];
+        [channelsController bind:@"contentSet" toObject:_server withKeyPath:@"channels" options:nil];
+        self.channelsController = channelsController;
+        [channelsController release];
+        
+        /** UsersArrayController */
+        
+        NSArrayController *usersController = [[NSArrayController alloc] init];
+        self.usersController = usersController;
+        [usersController release];
     }
     return self;
 }
@@ -59,6 +77,8 @@
     [_server release];
     [_autojoinChannels release];
     [_data release];
+    [_channelsController release];
+    [_usersController release];
     [super dealloc];
 }
 
@@ -110,71 +130,98 @@
 #pragma mark IrcConnectionDelegate methods
 
 - (void)didConnect {
-    // TODO: Create ChannelController
-    for (Channel *channel in _autojoinChannels) {
-        [_connection join:channel.name];
-    }
+//    for (Channel *channel in _autojoinChannels) {
+//        [_connection join:channel.name];
+//    }
+    [_connection join:@"#vernonbot2"];
 }
 
 // TODO: Encapsulate a lot of this logic into a ChannelController.
 - (void)didJoin:(NSString *)channelName byUser:(NSString *)user {
-    if ([_data objectForKey:channelName] == nil) { // I joined
-        [self loadChannel:channelName];
+    if ([self channelForName:channelName] == nil) {
+        Channel *newChannel = [Channel insertChannelInContext:_appDelegate.managedObjectContext];
+        newChannel.name = channelName;
         
-        for (Channel *channel in _server.channels) {
-            if ([channel.name isEqualToString:channelName]) {
-                _activeChannel = channel;
-            }
-        }
+        _activeChannel = newChannel;
         
-        [_appDelegate.mainView.channelList reloadData];
-        [_appDelegate.mainView.messageList reloadData];
+        // Terrible place for this to live... But for now.
+        [_usersController bind:@"contentSet" toObject:_activeChannel withKeyPath:@"users" options:nil];
         
-        NSUInteger row = [[_data allKeys] indexOfObject:channelName];
-        TUIFastIndexPath *indexPath = [TUIFastIndexPath indexPathForRow:row inSection:0];
-        
-        [_appDelegate.mainView.channelList selectRowAtIndexPath:indexPath];
-        
-        [_appDelegate updateWindowTitle];
-    } else {
-        NSMutableDictionary *channelData = [_data objectForKey:channelName];
-        
-        NSMutableArray *users = [channelData objectForKey:@"users"];
-        [users addObject:user];
-        
-        NSMutableArray *messages = [channelData objectForKey:@"messages"];
-        
-        JoinMessage *message = [[JoinMessage alloc] initWithUser:user time:[NSDate date]];
-        [messages addObject:message];
-        [message release];
-        
-        if ([channelName isEqualToString:_activeChannel.name]) {
-            [_appDelegate.mainView.messageList reloadData];
-            [_appDelegate.mainView.userList reloadData];
+        [_server addChannel:newChannel];
+    }
+    
+//    if ([_data objectForKey:channelName] == nil) { // I joined
+//        [self loadChannel:channelName];
+//        
+//        for (Channel *channel in _server.channels) {
+//            if ([channel.name isEqualToString:channelName]) {
+//                _activeChannel = channel;
+//            }
+//        }
+//        
+//        [_appDelegate.mainView.channelList reloadData];
+//        [_appDelegate.mainView.messageList reloadData];
+//        
+//        NSUInteger row = [[_data allKeys] indexOfObject:channelName];
+//        TUIFastIndexPath *indexPath = [TUIFastIndexPath indexPathForRow:row inSection:0];
+//        
+//        [_appDelegate.mainView.channelList selectRowAtIndexPath:indexPath];
+//        
+//        [_appDelegate updateWindowTitle];
+//    } else {
+//        NSMutableDictionary *channelData = [_data objectForKey:channelName];
+//        
+//        NSMutableArray *users = [channelData objectForKey:@"users"];
+//        [users addObject:user];
+//        
+//        NSMutableArray *messages = [channelData objectForKey:@"messages"];
+//        
+//        JoinMessage *message = [[JoinMessage alloc] initWithUser:user time:[NSDate date]];
+//        [messages addObject:message];
+//        [message release];
+//        
+//        if ([channelName isEqualToString:_activeChannel.name]) {
+//            [_appDelegate.mainView.messageList reloadData];
+//            [_appDelegate.mainView.userList reloadData];
+//        }
+//    }
+}
+
+- (void)didSay:(NSString *)text to:(NSString *)recipient fromUser:(NSString *)sender {
+    NSString *channelName;
+    
+    if ([recipient isEqual:_server.nickname]) { // private message
+        channelName = sender;
+        return; // not supported yet
+    } else { // channel message
+        channelName = recipient;
+    }
+    
+    Channel *channel = [self channelForName:channelName];
+    channel;
+}
+
+- (void)didNames:(NSArray *)names forChannel:(NSString *)channelName {
+    Channel *channel = [self channelForName:channelName];
+    if (channel != nil) {
+        for (NSString *nickname in names) {
+            User *user = [User insertUserInContext:_managedObjectContext];
+            user.nickname = nickname;
+            [channel addUser:user];
         }
     }
 }
 
 #pragma mark -
-#pragma mark Private methods
+#pragma mark Helper methods
 
-// TODO: Go away, soon.
-- (NSMutableDictionary *)loadChannel:(NSString *)channel {
-    NSMutableArray *messages = [[NSMutableArray alloc] initWithCapacity:10];
-    NSMutableArray *users = [[NSMutableArray alloc] initWithCapacity:10];
-    
-    NSMutableDictionary *channelData = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                        messages, @"messages",
-                                        users, @"users",
-                                        [NSNumber numberWithInt:0], @"unreadMessages",
-                                        [NSNumber numberWithInt:0], @"unreadAlerts",
-                                        nil];
-    [messages release];
-    [users release];
-    
-    [_data setObject:channelData forKey:channel];
-    
-    return channelData;
+- (Channel *)channelForName:(NSString *)name {
+    for (Channel *channel in _server.channels) {
+        if ([channel.name isEqualToString:name]) {
+            return channel;
+        }
+    }
+    return nil;
 }
 
 @end

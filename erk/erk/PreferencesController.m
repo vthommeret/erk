@@ -9,6 +9,9 @@
 #import "PreferencesController.h"
 #import "erkAppDelegate.h"
 
+#import "Server.h"
+#import "AlertWord.h"
+
 @implementation PreferencesController
 
 @synthesize window = _window;
@@ -62,6 +65,7 @@
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
+    NSLog(@"saving");
 }
 
 #pragma mark -

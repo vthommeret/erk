@@ -41,6 +41,8 @@
 
 @property (nonatomic, retain) MainView *mainView;
 
+@property (nonatomic, retain) ServerController *activeServerController;
+
 @property (nonatomic, retain) NSMutableDictionary *serverData;
 
 @property (nonatomic, retain) TUIFont *mediumFont;

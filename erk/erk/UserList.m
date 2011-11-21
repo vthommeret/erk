@@ -10,6 +10,9 @@
 #import "MainView.h"
 #import "MainTableViewCell.h"
 
+#import "ServerController.h"
+#import "User.h"
+
 @implementation UserList
 
 @synthesize tableView = _tableView;
@@ -25,6 +28,8 @@
         
         self.tableView = tableView;
         [tableView release];
+        
+        [[self usersController] addObserver:self forKeyPath:@"arrangedObjects" options:0 context:nil];
     }
     return self;
 }
@@ -35,7 +40,16 @@
     [super dealloc];
 }
 
+- (NSArrayController *)usersController {
+    return _appDelegate.activeServerController.usersController;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    [_tableView reloadData];
+}
+
 - (void)reloadData {
+    // shouldn't really be called anymore
     [_appDelegate sortUsers];
     [_tableView reloadData];
 }
@@ -45,7 +59,7 @@
 
 - (NSInteger)tableView:(TUITableView *)table numberOfRowsInSection:(NSInteger)section
 {
-	return [_appDelegate countUsers];
+    return [[self usersController].arrangedObjects count];
 }
 
 - (CGFloat)tableView:(TUITableView *)tableView heightForRowAtIndexPath:(TUIFastIndexPath *)indexPath
@@ -57,9 +71,9 @@
 {
 	MainTableViewCell *cell = reusableTableCellOfClass(tableView, MainTableViewCell);
 	
-    NSString *user = [_appDelegate userForRow:indexPath.row];
+    User *user = [[self usersController].arrangedObjects objectAtIndex:indexPath.row];
     
-	TUIAttributedString *s = [TUIAttributedString stringWithString:user];
+	TUIAttributedString *s = [TUIAttributedString stringWithString:user.nickname];
 	s.color = [TUIColor blackColor];
 	s.font = _appDelegate.mediumFont;
 	cell.attributedString = s;

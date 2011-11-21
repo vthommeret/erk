@@ -11,6 +11,10 @@
 #import "MainTableViewCell.h"
 #import "NSInvocation+ForwardedConstruction.h"
 
+#import "ServerController.h"
+#import "Server.h"
+#import "Channel.h"
+
 @implementation ChannelList
 
 @synthesize tableView = _tableView;
@@ -24,8 +28,10 @@
         tableView.dataSource = self;
         tableView.delegate = self;
         
-        self.tableView = tableView;
+        _tableView = [tableView retain];
         [tableView release];
+        
+        [[self channelsController] addObserver:self forKeyPath:@"arrangedObjects" options:0 context:nil];
     }
     return self;
 }
@@ -36,7 +42,16 @@
     [super dealloc];
 }
 
+- (NSArrayController *)channelsController {
+    return _appDelegate.activeServerController.channelsController;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    [_tableView reloadData];
+}
+
 - (void)reloadData {
+    NSLog(@"shouldn't really be called anymore");
     [_tableView reloadData];
 }
 
@@ -51,7 +66,7 @@
 
 - (NSInteger)tableView:(TUITableView *)table numberOfRowsInSection:(NSInteger)section
 {
-    return [_appDelegate countChannels];
+    return [[self channelsController].arrangedObjects count];
 }
 
 - (CGFloat)tableView:(TUITableView *)tableView heightForRowAtIndexPath:(TUIFastIndexPath *)indexPath
@@ -63,16 +78,17 @@
 {
     MainTableViewCell *cell = reusableTableCellOfClass(tableView, MainTableViewCell);
     
-    NSString *channelName = [_appDelegate channelNameForRow:indexPath.row];
-    NSMutableDictionary *channelData = [_appDelegate channelDataForName:channelName];
+    Channel *channel = [[self channelsController].arrangedObjects objectAtIndex:indexPath.row];
     
-    int unreadMessages = [[channelData objectForKey:@"unreadMessages"] intValue];
-    int unreadAlerts = [[channelData objectForKey:@"unreadAlerts"] intValue];
+    NSString *channelName = channel.name;
     
+    NSInteger unreadMessages = channel.unreadCount;
+    NSInteger unreadAlerts = channel.unreadAlerts;
+
     NSString *channelText;
-    
+
     if (unreadMessages > 0) {
-        channelText = [NSString stringWithFormat:@"%@ (%d)", channelName, unreadMessages];
+        channelText = [NSString stringWithFormat:@"%@ (%lu)", channelName, unreadMessages];
     } else {
         channelText = channelName;
     }
